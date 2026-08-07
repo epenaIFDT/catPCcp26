@@ -328,17 +328,17 @@ function generateCardHTML(p) {
   } else {
     // Solo se listan specs con dato real; nada de "N/A" ocupando espacio.
     const items = [];
-    if (p.specs.procesador) items.push({ icon: '⚡', value: shortText(p.specs.procesador, 25) });
-    if (p.specs.ram) items.push({ icon: '💾', value: shortText(p.specs.ram, 20) });
-    if (p.specs.almacenamiento) items.push({ icon: '📀', value: shortText(p.specs.almacenamiento, 20) });
-    if (p.specs.sistemaOperativo) items.push({ icon: '🖥️', value: getOSShort(p.specs.sistemaOperativo) });
-    if (p.specs.pantalla) items.push({ icon: '🖵', value: shortText(p.specs.pantalla, 25) });
-    if (isDedicatedVideo(p.specs.tarjetaVideo)) items.push({ icon: '🎮', value: shortText(p.specs.tarjetaVideo, 25) });
+    if (p.specs.procesador) items.push({ label: 'CPU', value: shortText(p.specs.procesador, 25) });
+    if (p.specs.ram) items.push({ label: 'RAM', value: shortText(p.specs.ram, 20) });
+    if (p.specs.almacenamiento) items.push({ label: 'Disco', value: shortText(p.specs.almacenamiento, 20) });
+    if (p.specs.sistemaOperativo) items.push({ label: 'SO', value: getOSShort(p.specs.sistemaOperativo) });
+    if (p.specs.pantalla) items.push({ label: 'Pantalla', value: shortText(p.specs.pantalla, 25) });
+    if (isDedicatedVideo(p.specs.tarjetaVideo)) items.push({ label: 'GPU', value: shortText(p.specs.tarjetaVideo, 25) });
 
     specsHTML = items.length
       ? `<div class="card-specs">${items.map(it => `
         <div class="spec-item">
-          <span class="spec-icon">${it.icon}</span>
+          <span class="spec-label">${it.label}:</span>
           <span class="spec-value">${it.value}</span>
         </div>`).join('')}</div>`
       : '';

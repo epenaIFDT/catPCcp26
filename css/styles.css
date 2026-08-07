@@ -631,13 +631,23 @@ body {
 .spec-item {
   font-size: 0.8rem;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-items: baseline;
+  gap: 5px;
+  overflow: hidden;
 }
 
-.spec-item .spec-icon { font-size: 0.75rem; }
-.spec-item .spec-label { color: var(--text-light); }
-.spec-item .spec-value { font-weight: 500; }
+.spec-item .spec-label {
+  color: var(--text-light);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.spec-item .spec-value {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .card-footer {
   display: flex;
@@ -874,6 +884,10 @@ body {
 
   .card-specs {
     grid-template-columns: 1fr;
+  }
+
+  .spec-item {
+    font-size: 0.88rem;
   }
 
   .card-qty {

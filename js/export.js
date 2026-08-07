@@ -65,9 +65,11 @@ function buildWhatsAppFullText(products, fecha, ref) {
     // Título + código en una sola línea (menos líneas, más fácil de escanear)
     text += `*${i + 1}. ${getCardTitle(p)}* (Código: ${p.nroParte})\n`;
     text += buildItemSpecsWhatsApp(p);
-    text += qty > 1
-      ? `Cantidad: ${qty} — Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} c/u — Total item: *$${subtotal.toLocaleString('en-US')} USD*\n`
-      : `Precio de lista (referencial): *$${p.precio.toLocaleString('en-US')} USD*\n`;
+    // Siempre precio unitario (c/u) + total del item, sin importar la
+    // cantidad, para un formato consistente en toda la selección.
+    text += `Cantidad: ${qty}\n`;
+    text += `Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD (c/u)\n`;
+    text += `Total item: *$${subtotal.toLocaleString('en-US')} USD*\n`;
 
     // Separador liviano entre productos
     text += i < products.length - 1 ? '─────────────────────\n\n' : '\n';
@@ -202,9 +204,11 @@ async function copySummary() {
 
     text += `${i + 1}. ${getCardTitle(p)} (Codigo: ${p.nroParte})\n`;
     text += buildItemSpecsSummary(p);
-    text += qty > 1
-      ? `   Cantidad: ${qty} - Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD c/u - Total item: $${subtotal.toLocaleString('en-US')} USD\n`
-      : `   Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD\n`;
+    // Siempre precio unitario (c/u) + total del item, sin importar la
+    // cantidad, para un formato consistente en toda la selección.
+    text += `   Cantidad: ${qty}\n`;
+    text += `   Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD (c/u)\n`;
+    text += `   Total item: $${subtotal.toLocaleString('en-US')} USD\n`;
 
     text += i < products.length - 1 ? '   ....................................\n\n' : '\n';
   });
