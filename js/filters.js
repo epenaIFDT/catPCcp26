@@ -423,6 +423,31 @@ function updateQuantity(id, inputEl) {
   selectedQuantities.set(id, qty);
 }
 
+// Aplica una misma cantidad a TODOS los productos actualmente seleccionados
+// (control junto a "Seleccionar todos los resultados"), sobreescribiendo
+// cualquier cantidad individual que se haya puesto antes.
+function applyBulkQuantity() {
+  const input = document.getElementById('bulk-qty-input');
+  if (!input) return;
+
+  let qty = parseInt(input.value, 10);
+  if (!qty || qty < 1) qty = 1;
+  input.value = qty;
+
+  if (selectedProducts.size === 0) {
+    showToast('⚠️ No hay productos seleccionados para aplicar la cantidad');
+    return;
+  }
+
+  selectedProducts.forEach(id => selectedQuantities.set(id, qty));
+
+  document.querySelectorAll('.product-card.selected .card-qty').forEach(qtyInput => {
+    qtyInput.value = qty;
+  });
+
+  showToast(`✅ Cantidad ${qty} aplicada a ${selectedProducts.size} producto(s) seleccionado(s)`);
+}
+
 function updateCardSelection(id) {
   const card = document.querySelector(`.product-card[data-id="${id}"]`);
   if (!card) return;

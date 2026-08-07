@@ -8,6 +8,47 @@ function getCardTitle(p) {
   return p.modelo ? `${p.marca} ${p.modelo}` : `${p.marca} — ${p.nroParte}`;
 }
 
+function truncateText(text, max) {
+  if (!text) return '';
+  return text.length > max ? text.substring(0, max) + '...' : text;
+}
+
+// Categorías sin procesador/RAM/SO (no aplican): en su lugar se usa un
+// resumen tomado de la descripción original del Excel.
+const CATEGORIAS_SIN_SPECS = ['MONITOR', 'PANTALLA INTERACTIVA'];
+
+function getDescriptionSummary(p, maxLen) {
+  if (!p.descripcion) return 'Sin descripción disponible.';
+  // Quita el prefijo "CATEGORIA : " (ya se muestra aparte como título/badge)
+  const sinPrefijo = p.descripcion.replace(/^[^:]+:\s*/, '');
+  return truncateText(sinPrefijo, maxLen);
+}
+
+// Bloque de specs de un producto para el mensaje de WhatsApp (con viñetas).
+// Evita mostrar "Procesador: N/A" etc. en categorías que no tienen esos
+// datos (monitores, pantallas interactivas) — se usa la descripción en su lugar.
+function buildItemSpecsWhatsApp(p) {
+  if (CATEGORIAS_SIN_SPECS.includes(p.categoria)) {
+    return `${getDescriptionSummary(p, 220)}\n`;
+  }
+
+  let block = '';
+  block += `• Procesador: ${formatProcessor(p.specs.procesador)}\n`;
+  block += `• RAM: ${formatRAM(p.specs.ram)}\n`;
+  block += `• Almacenamiento: ${formatStorage(p.specs.almacenamiento)}\n`;
+  if (p.specs.pantalla) block += `• Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
+  block += `• Sistema operativo: ${formatOS(p.specs.sistemaOperativo)}\n`;
+  if (p.specs.software && p.specs.software !== 'NO') block += `• Office: ${formatSoftware(p.specs.software)}\n`;
+  if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
+    block += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
+  }
+  if (p.specs.case) block += `• Gabinete: ${p.specs.case}\n`;
+  if (p.specs.fuente) block += `• Fuente de poder: ${p.specs.fuente}\n`;
+  if (p.specs.chipset) block += `• Chipset: ${p.specs.chipset}\n`;
+  block += `• Garantía: ${p.specs.garantia}\n`;
+  return block;
+}
+
 function buildWhatsAppFullText(products, fecha, ref) {
   let text = `Hola, te comparto la cotización VASTEC del ${fecha}:\n\n`;
 
@@ -15,43 +56,15 @@ function buildWhatsAppFullText(products, fecha, ref) {
     const qty = getQty(p);
     const subtotal = p.precio * qty;
 
-    text += `*${i + 1}. ${getCardTitle(p)}*\n`;
-    text += `Código: ${p.nroParte}\n`;
-    text += `• Procesador: ${formatProcessor(p.specs.procesador)}\n`;
-    text += `• RAM: ${formatRAM(p.specs.ram)}\n`;
-    text += `• Almacenamiento: ${formatStorage(p.specs.almacenamiento)}\n`;
-
-    if (p.specs.pantalla) {
-      text += `• Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
-    }
-
-    text += `• Sistema operativo: ${formatOS(p.specs.sistemaOperativo)}\n`;
-
-    if (p.specs.software && p.specs.software !== 'NO') {
-      text += `• Office: ${formatSoftware(p.specs.software)}\n`;
-    }
-
-    if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
-      text += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
-    }
-
-    if (p.specs.case) {
-      text += `• Gabinete: ${p.specs.case}\n`;
-    }
-
-    if (p.specs.fuente) {
-      text += `• Fuente de poder: ${p.specs.fuente}\n`;
-    }
-
-    if (p.specs.chipset) {
-      text += `• Chipset: ${p.specs.chipset}\n`;
-    }
-
-    text += `• Garantía: ${p.specs.garantia}\n`;
-    text += `Cantidad: ${qty}\n`;
+    // Título + código en una sola línea (menos líneas, más fácil de escanear)
+    text += `*${i + 1}. ${getCardTitle(p)}* (Código: ${p.nroParte})\n`;
+    text += buildItemSpecsWhatsApp(p);
     text += qty > 1
-      ? `Precio: $${p.precio.toLocaleString('en-US')} USD c/u — Subtotal: *$${subtotal.toLocaleString('en-US')} USD*\n\n`
-      : `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n\n`;
+      ? `Cantidad: ${qty} — c/u $${p.precio.toLocaleString('en-US')} — Subtotal: *$${subtotal.toLocaleString('en-US')} USD*\n`
+      : `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n`;
+
+    // Separador liviano entre productos (no entre el último y el total)
+    text += i < products.length - 1 ? '─────────────────────\n\n' : '\n';
   });
 
   const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
@@ -83,6 +96,30 @@ function buildWhatsAppCompactText(products, fecha, ref) {
   text += `VASTEC - Soluciones Tecnológicas`;
 
   return text;
+}
+
+// Igual que buildItemSpecsWhatsApp pero en texto plano (sin viñetas ni
+// negritas), para "Copiar resumen" — pensado para pegar en Word/Excel.
+function buildItemSpecsSummary(p) {
+  if (CATEGORIAS_SIN_SPECS.includes(p.categoria)) {
+    return `   ${getDescriptionSummary(p, 220)}\n`;
+  }
+
+  let block = '';
+  block += `   CPU: ${formatProcessor(p.specs.procesador)}\n`;
+  block += `   RAM: ${formatRAM(p.specs.ram)}\n`;
+  block += `   Disco: ${formatStorage(p.specs.almacenamiento)}\n`;
+  if (p.specs.pantalla) block += `   Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
+  block += `   SO: ${formatOS(p.specs.sistemaOperativo)}\n`;
+  if (p.specs.software && p.specs.software !== 'NO') block += `   Office: ${formatSoftware(p.specs.software)}\n`;
+  if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
+    block += `   GPU: ${p.specs.tarjetaVideo}\n`;
+  }
+  if (p.specs.case) block += `   Gabinete: ${p.specs.case}\n`;
+  if (p.specs.fuente) block += `   Fuente de poder: ${p.specs.fuente}\n`;
+  if (p.specs.chipset) block += `   Chipset: ${p.specs.chipset}\n`;
+  block += `   Garantia: ${p.specs.garantia}\n`;
+  return block;
 }
 
 function shareWhatsApp() {
@@ -147,43 +184,13 @@ async function copySummary() {
     const qty = getQty(p);
     const subtotal = p.precio * qty;
 
-    text += `${i + 1}. ${getCardTitle(p)}\n`;
-    text += `   Codigo: ${p.nroParte}\n`;
-    text += `   CPU: ${formatProcessor(p.specs.procesador)}\n`;
-    text += `   RAM: ${formatRAM(p.specs.ram)}\n`;
-    text += `   Disco: ${formatStorage(p.specs.almacenamiento)}\n`;
-
-    if (p.specs.pantalla) {
-      text += `   Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
-    }
-
-    text += `   SO: ${formatOS(p.specs.sistemaOperativo)}\n`;
-
-    if (p.specs.software && p.specs.software !== 'NO') {
-      text += `   Office: ${formatSoftware(p.specs.software)}\n`;
-    }
-
-    if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
-      text += `   GPU: ${p.specs.tarjetaVideo}\n`;
-    }
-
-    if (p.specs.case) {
-      text += `   Gabinete: ${p.specs.case}\n`;
-    }
-
-    if (p.specs.fuente) {
-      text += `   Fuente de poder: ${p.specs.fuente}\n`;
-    }
-
-    if (p.specs.chipset) {
-      text += `   Chipset: ${p.specs.chipset}\n`;
-    }
-
-    text += `   Garantia: ${p.specs.garantia}\n`;
-    text += `   Cantidad: ${qty}\n`;
+    text += `${i + 1}. ${getCardTitle(p)} (Codigo: ${p.nroParte})\n`;
+    text += buildItemSpecsSummary(p);
     text += qty > 1
-      ? `   Precio unitario: $${p.precio.toLocaleString('en-US')} USD - Subtotal: $${subtotal.toLocaleString('en-US')} USD\n\n`
-      : `   Precio: $${p.precio.toLocaleString('en-US')} USD\n\n`;
+      ? `   Cantidad: ${qty} - Precio unitario: $${p.precio.toLocaleString('en-US')} USD - Subtotal: $${subtotal.toLocaleString('en-US')} USD\n`
+      : `   Precio: $${p.precio.toLocaleString('en-US')} USD\n`;
+
+    text += i < products.length - 1 ? '   ....................................\n\n' : '\n';
   });
 
   const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);

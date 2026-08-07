@@ -125,6 +125,11 @@
         <input type="checkbox" id="select-all-filtered">
         Seleccionar todos los resultados (<span id="select-all-count">0</span>)
       </label>
+      <div class="bulk-qty-control">
+        <label for="bulk-qty-input">Cantidad para todos:</label>
+        <input type="number" id="bulk-qty-input" min="1" value="1">
+        <button type="button" id="btn-apply-bulk-qty" class="btn btn-outline btn-sm">Aplicar</button>
+      </div>
       <div class="sort-controls">
         <label style="font-size:0.85rem;">Ordenar:</label>
         <select id="sort-by">

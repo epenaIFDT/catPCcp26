@@ -267,6 +267,8 @@ function setupEventListeners() {
   if (selectAllCb) {
     selectAllCb.addEventListener('change', () => toggleSelectAllFiltered(selectAllCb.checked));
   }
+
+  document.getElementById('btn-apply-bulk-qty')?.addEventListener('click', applyBulkQuantity);
 }
 
 // ============================================
@@ -314,17 +316,6 @@ function renderProducts(reset = false) {
   }
 }
 
-// Categorías sin procesador/RAM/SO (no aplican): se muestra un resumen de
-// texto en su lugar, tomado de la descripción original del Excel.
-const CATEGORIAS_SIN_SPECS = ['MONITOR', 'PANTALLA INTERACTIVA'];
-
-function getShortDescription(p) {
-  if (!p.descripcion) return 'Sin descripción disponible.';
-  // Quita el prefijo "CATEGORIA : " (ya se muestra aparte como badge)
-  const sinPrefijo = p.descripcion.replace(/^[^:]+:\s*/, '');
-  return shortText(sinPrefijo, 160);
-}
-
 // Generar HTML de una card (función pura, rápida)
 function generateCardHTML(p) {
   const isSelected = selectedProducts.has(p.id);
@@ -332,7 +323,7 @@ function generateCardHTML(p) {
   const sinSpecs = CATEGORIAS_SIN_SPECS.includes(p.categoria);
 
   const specsHTML = sinSpecs
-    ? `<div class="card-description">${getShortDescription(p)}</div>`
+    ? `<div class="card-description">${getDescriptionSummary(p, 160)}</div>`
     : `<div class="card-specs">
         <div class="spec-item">
           <span class="spec-icon">⚡</span>

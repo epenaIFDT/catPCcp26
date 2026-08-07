@@ -498,6 +498,23 @@ body {
   cursor: pointer;
 }
 
+.bulk-qty-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.bulk-qty-control input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 .sort-controls {
   display: flex;
   align-items: center;
@@ -826,6 +843,16 @@ body {
   }
 
   .select-all-label {
+    font-size: 0.95rem;
+  }
+
+  .bulk-qty-control {
+    font-size: 0.9rem;
+  }
+
+  .bulk-qty-control input {
+    width: 70px;
+    padding: 8px;
     font-size: 0.95rem;
   }
 
