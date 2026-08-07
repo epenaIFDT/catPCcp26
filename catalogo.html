@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo VASTEC</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-content">
+      <span class="header-title">📋 Catálogo VASTEC</span>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Buscar por modelo, N° parte, procesador...">
+      </div>
+      <div class="header-actions">
+        <span id="user-name" style="font-size:0.85rem;color:var(--text-light);"></span>
+        <a href="admin-local/index.html" class="btn btn-outline btn-sm" id="admin-link" style="display:none;text-decoration:none;">⚙️ Gestión</a>
+        <button class="btn btn-outline btn-sm" onclick="logout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <div class="filters-content">
+      <div class="filters-row">
+        <select id="filter-categoria" class="filter-select"></select>
+        <select id="filter-procesador" class="filter-select"></select>
+        <select id="filter-ram" class="filter-select"></select>
+        <select id="filter-almacenamiento" class="filter-select"></select>
+        <select id="filter-so" class="filter-select"></select>
+        <select id="filter-software" class="filter-select"></select>
+        <div class="price-range">
+          <input type="number" id="price-min" placeholder="Min $">
+          <span>-</span>
+          <input type="number" id="price-max" placeholder="Max $">
+        </div>
+        <button id="filters-toggle" class="filters-toggle">⚙️ Más filtros</button>
+      </div>
+
+      <!-- ADVANCED FILTERS (hidden) -->
+      <div id="filters-advanced" class="filters-advanced">
+        <select id="filter-lan" class="filter-select">
+          <option value="">LAN (todos)</option>
+          <option value="si">Con LAN</option>
+          <option value="no">Sin LAN</option>
+        </select>
+        <select id="filter-wlan" class="filter-select">
+          <option value="">WLAN (todos)</option>
+          <option value="si">Con WLAN</option>
+          <option value="no">Sin WLAN</option>
+        </select>
+        <select id="filter-hdmi" class="filter-select">
+          <option value="">HDMI (todos)</option>
+          <option value="si">Con HDMI</option>
+          <option value="no">Sin HDMI</option>
+        </select>
+        <select id="filter-vga" class="filter-select">
+          <option value="">VGA (todos)</option>
+          <option value="si">Con VGA</option>
+          <option value="no">Sin VGA</option>
+        </select>
+        <select id="filter-optica" class="filter-select">
+          <option value="">U. Óptica (todos)</option>
+          <option value="si">Con U. Óptica</option>
+          <option value="no">Sin U. Óptica</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <main class="results-container">
+    <div class="results-header">
+      <span class="results-count" id="results-count"></span>
+      <div class="sort-controls">
+        <label style="font-size:0.85rem;">Ordenar:</label>
+        <select id="sort-by">
+          <option value="precio-asc">Precio ↑</option>
+          <option value="precio-desc">Precio ↓</option>
+          <option value="ram-asc">RAM ↑</option>
+          <option value="ram-desc">RAM ↓</option>
+          <option value="nombre">Nombre A-Z</option>
+        </select>
+      </div>
+    </div>
+<!-- INDICADOR DE CARGA -->
+<div id="loading-indicator" style="display:none;text-align:center;padding:20px;">
+  <div style="display:inline-block;width:32px;height:32px;border:3px solid #e5e7eb;border-top-color:#1a56db;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <p style="color:#6b7280;font-size:0.9rem;margin-top:8px;">Procesando filtros...</p>
+</div>
+
+<div class="cards-grid" id="products-grid"></div>
+
+<!-- BOTÓN CARGAR MÁS -->
+<div style="text-align:center;margin:24px 0;">
+  <button id="btn-load-more" class="btn btn-outline" style="display:none;padding:12px 32px;">
+    📦 Cargar más
+  </button>
+</div>
+
+<!-- SENTINEL PARA INFINITE SCROLL -->
+<div id="scroll-sentinel" style="height:1px;"></div>
+  </main>
+
+  <!-- SELECTION BAR -->
+  <div class="selection-bar" id="selection-bar">
+    <span class="selection-info">🛒 <strong id="selection-count">0</strong> producto(s) seleccionado(s)</span>
+    <div class="selection-actions">
+    <button class="btn btn-success btn-sm" id="btn-whatsapp">📱 WhatsApp</button>
+    <button class="btn btn-outline btn-sm" id="btn-copy-summary" style="color:white;border-color:white;">📋 Copiar resumen</button>
+    <button class="btn btn-outline btn-sm" id="btn-clear-selection" style="color:white;border-color:white;">✕ Limpiar</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/crypto.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+<style>
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</body>
+</html>

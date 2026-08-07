@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Catálogo VASTEC - Acceso autorizado">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Acceso | Catálogo VASTEC</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Estilos específicos del login */
+    body {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 50%, #3b82f6 100%);
+      min-height: 100vh;
+    }
+    
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(29, 78, 216, 0.2) 0%, transparent 50%),
+        linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    }
+    
+    .login-box {
+      background: white;
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .login-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .login-logo .icon {
+      font-size: 3rem;
+      display: inline-block;
+      background: linear-gradient(135deg, #1a56db, #3b82f6);
+      width: 80px;
+      height: 80px;
+      line-height: 80px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(26, 86, 219, 0.3);
+    }
+    
+    .login-logo h1 {
+      font-size: 1.6rem;
+      color: #111827;
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    
+    .login-logo .subtitle {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    
+    .login-form .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .login-form label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+      background: #f9fafb;
+    }
+    
+    .login-form input:focus {
+      outline: none;
+      border-color: #1a56db;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+    }
+    
+    .login-form .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 42px;
+      font-size: 1.1rem;
+      color: #9ca3af;
+      pointer-events: none;
+    }
+    
+    .login-form .btn-primary {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1a56db, #1e40af);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+    
+    .login-form .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26, 86, 219, 0.4);
+    }
+    
+    .login-form .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .login-form .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .error-message {
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: shake 0.4s;
+    }
+    
+    .error-message.show {
+      display: flex;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+    
+    .success-message {
+      background: #d1fae5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .success-message.show {
+      display: flex;
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    
+    .login-footer a {
+      color: #1a56db;
+      text-decoration: none;
+    }
+    
+    .login-help {
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      color: #1e40af;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      margin-top: 16px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    
+    .login-help strong {
+      font-weight: 700;
+    }
+    
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 32px 24px;
+      }
+      
+      .login-logo .icon {
+        width: 64px;
+        height: 64px;
+        line-height: 64px;
+        font-size: 2.2rem;
+      }
+      
+      .login-logo h1 {
+        font-size: 1.3rem;
+      }
+    }
+    
+    /* Loader */
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-box">
+      <!-- LOGO -->
+      <div class="login-logo">
+        <div class="icon">🖥️</div>
+        <h1>Catálogo VASTEC</h1>
+        <div class="subtitle">Sistema de consulta de productos</div>
+      </div>
+
+      <!-- MENSAJES -->
+      <div class="error-message" id="login-error">
+        <span>⚠️</span>
+        <span id="error-text">Código inválido. Contacta al administrador.</span>
+      </div>
+      
+      <div class="success-message" id="login-success">
+        <span>✅</span>
+        <span>Acceso verificado. Redirigiendo...</span>
+      </div>
+
+      <!-- FORMULARIO -->
+      <form class="login-form" id="login-form" onsubmit="return false;">
+        <div class="input-group">
+          <label for="access-code">Código de acceso</label>
+          <span class="input-icon">🔑</span>
+          <input 
+            type="password" 
+            id="access-code" 
+            placeholder="Ingresa tu código"
+            autocomplete="off"
+            autofocus
+            required
+          >
+        </div>
+        
+        <button type="submit" class="btn-primary" id="btn-login">
+          Ingresar al Catálogo
+        </button>
+      </form>
+
+      <!-- AYUDA -->
+      <div class="login-help">
+        💡 El código lo proporciona el administrador del sistema.<br>
+        La sesión permanece activa por <strong>90 días</strong>.
+      </div>
+
+      <!-- FOOTER -->
+      <div class="login-footer">
+        © 2026 VASTEC · Todos los derechos reservados
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/crypto.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // ============================================
+    // LÓGICA DE LOGIN CON PROTECCIÓN ANTIBUCLE
+    // ============================================
+    
+    const ERROR_DELAY = 3000; // ms para ocultar mensaje de error
+    
+    // 1. Verificar sesión existente ANTES de mostrar nada
+    (function checkExistingSession() {
+      const session = getSession();
+      if (session) {
+        // Ya hay sesión válida → redirigir con replace() para evitar bucle
+        window.location.replace('catalogo.html');
+      }
+    })();
+    
+    // 2. Elementos del DOM
+    const form = document.getElementById('login-form');
+    const input = document.getElementById('access-code');
+    const btn = document.getElementById('btn-login');
+    const errorBox = document.getElementById('login-error');
+    const errorText = document.getElementById('error-text');
+    const successBox = document.getElementById('login-success');
+    
+    // 3. Manejar envío del formulario
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await doLogin();
+    });
+    
+    // 4. Función principal de login
+    async function doLogin() {
+      const code = input.value.trim();
+      
+      // Validación básica
+      if (!code) {
+        showError('Por favor ingresa tu código de acceso.');
+        input.focus();
+        return;
+      }
+      
+      // Deshabilitar botón y mostrar loader
+      setLoading(true);
+      hideMessages();
+      
+      try {
+        // Intentar validar código
+        const session = await validateCode(code);
+        
+        if (session) {
+          // ✅ Login exitoso
+          successBox.classList.add('show');
+          
+          // Pequeño delay para mostrar feedback antes de redirigir
+          setTimeout(() => {
+            window.location.replace('catalogo.html');
+          }, 400);
+          
+        } else {
+          // ❌ Código inválido
+          showError('Código inválido. Verifica e intenta nuevamente.');
+          input.value = '';
+          input.focus();
+          setLoading(false);
+        }
+        
+      } catch (error) {
+        // ⚠️ Error de red u otro
+        console.error('Error en login:', error);
+        showError('Error de conexión. Verifica tu conexión a internet.');
+        setLoading(false);
+      }
+    }
+    
+    // 5. Funciones auxiliares
+    function showError(message) {
+      errorText.textContent = message;
+      errorBox.classList.add('show');
+      successBox.classList.remove('show');
+      
+      // Auto-ocultar después de unos segundos
+      setTimeout(() => {
+        errorBox.classList.remove('show');
+      }, ERROR_DELAY);
+    }
+    
+    function hideMessages() {
+      errorBox.classList.remove('show');
+      successBox.classList.remove('show');
+    }
+    
+    function setLoading(isLoading) {
+      btn.disabled = isLoading;
+      if (isLoading) {
+        btn.innerHTML = '<span class="loader"></span>Verificando...';
+      } else {
+        btn.textContent = 'Ingresar al Catálogo';
+      }
+    }
+    
+    // 6. Ocultar error al escribir
+    input.addEventListener('input', () => {
+      if (errorBox.classList.contains('show')) {
+        hideMessages();
+      }
+    });
+    
+    // 7. Prevenir pegar espacios
+    input.addEventListener('paste', (e) => {
+      setTimeout(() => {
+        input.value = input.value.trim();
+      }, 0);
+    });
+  </script>
+</body>
+</html>
