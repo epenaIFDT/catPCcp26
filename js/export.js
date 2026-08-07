@@ -54,6 +54,21 @@ function shareWhatsApp() {
   text += `Cotizado por: ${ref}\n`;
   text += `VASTEC - Soluciones Tecnológicas`;
 
+  // Límite práctico aproximado: mensajes muy largos pueden no abrirse
+  // completos (o fallar) al pasarlos como parámetro de la URL de WhatsApp.
+  // No es un límite oficial exacto, pero por encima de esto conviene avisar.
+  const WHATSAPP_SAFE_LIMIT = 3000;
+  if (text.length > WHATSAPP_SAFE_LIMIT) {
+    const continuar = confirm(
+      `El mensaje tiene ${text.length.toLocaleString('es-PE')} caracteres para ${products.length} equipo(s), ` +
+      `por encima del límite práctico recomendado (~${WHATSAPP_SAFE_LIMIT.toLocaleString('es-PE')}) para que WhatsApp lo abra completo.\n\n` +
+      `Es posible que el mensaje se corte o no abra correctamente.\n\n` +
+      `Sugerencia: reduce la selección, o usa "Copiar resumen" para pegarlo en un documento.\n\n` +
+      `¿Deseas intentar abrir WhatsApp de todas formas?`
+    );
+    if (!continuar) return;
+  }
+
   // Se usa siempre el enlace directo de WhatsApp (wa.me) en vez de navigator.share():
   // el share nativo del sistema pasa el texto por el panel "Compartir" de Windows,
   // que corrompe los emojis antes de que lleguen a la app de destino.
@@ -160,10 +175,39 @@ function formatStorage(storage) {
   return storage;
 }
 
+// Nombres comerciales SOLO para resoluciones exactas conocidas. Si no
+// coincide con ninguna, se muestra el ancho x alto real en vez de adivinar
+// (antes se asumía "FHD" para cualquier pantalla, aunque fuera 2K/4K).
+const KNOWN_RESOLUTIONS = [
+  { w: 1280, h: 720, label: 'HD' },
+  { w: 1366, h: 768, label: 'HD' },
+  { w: 1920, h: 1080, label: 'FHD' },
+  { w: 1920, h: 1200, label: 'WUXGA' },
+  { w: 2560, h: 1080, label: 'FHD Ultrawide' },
+  { w: 2560, h: 1440, label: 'QHD' },
+  { w: 2560, h: 1600, label: 'WQXGA' },
+  { w: 3440, h: 1440, label: 'UWQHD' },
+  { w: 3840, h: 1600, label: '4K Ultrawide' },
+  { w: 3840, h: 2160, label: '4K UHD' }
+];
+
 function formatScreen(screen) {
   if (!screen) return '';
-  const match = screen.match(/(\d+\.?\d*)/);
-  if (match) return `${match[1]}" FHD`;
+
+  const sizeMatch = screen.match(/(\d+\.?\d*)\s*["']/) || screen.match(/(\d+\.?\d*)/);
+  const size = sizeMatch ? sizeMatch[1] : null;
+
+  const resMatch = screen.match(/(\d{3,4})\s*[xX]\s*(\d{3,4})/);
+  let resLabel = '';
+  if (resMatch) {
+    const w = parseInt(resMatch[1], 10);
+    const h = parseInt(resMatch[2], 10);
+    const known = KNOWN_RESOLUTIONS.find(r => r.w === w && r.h === h);
+    resLabel = known ? known.label : `${w}x${h}`;
+  }
+
+  if (size && resLabel) return `${size}" ${resLabel}`;
+  if (size) return `${size}"`;
   return screen;
 }
 

@@ -43,7 +43,7 @@
           <div class="filter-dropdown-panel" id="panel-almacenamiento"></div>
         </div>
         <div class="filter-dropdown" data-filter="so">
-          <button type="button" class="filter-dropdown-btn" id="btn-so">Sistema Op. <span class="filter-count" id="count-so"></span></button>
+          <button type="button" class="filter-dropdown-btn" id="btn-so">Sistema Operativo <span class="filter-count" id="count-so"></span></button>
           <div class="filter-dropdown-panel" id="panel-so"></div>
         </div>
         <div class="filter-dropdown" data-filter="software">
@@ -121,6 +121,10 @@
   <main class="results-container">
     <div class="results-header">
       <span class="results-count" id="results-count"></span>
+      <label class="select-all-label">
+        <input type="checkbox" id="select-all-filtered">
+        Seleccionar todos los resultados (<span id="select-all-count">0</span>)
+      </label>
       <div class="sort-controls">
         <label style="font-size:0.85rem;">Ordenar:</label>
         <select id="sort-by">

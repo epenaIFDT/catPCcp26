@@ -28,6 +28,7 @@ async function initApp() {
   if (maxEl) maxEl.placeholder = `$${range.max}`;
 
   renderProducts(true);
+  updateSelectAllUI();
   setupEventListeners();
   setupInfiniteScroll();
 }
@@ -261,6 +262,11 @@ function setupEventListeners() {
   document.getElementById('btn-whatsapp')?.addEventListener('click', shareWhatsApp);
   document.getElementById('btn-copy-summary')?.addEventListener('click', copySummary);
   document.getElementById('btn-clear-selection')?.addEventListener('click', clearSelection);
+
+  const selectAllCb = document.getElementById('select-all-filtered');
+  if (selectAllCb) {
+    selectAllCb.addEventListener('change', () => toggleSelectAllFiltered(selectAllCb.checked));
+  }
 }
 
 // ============================================

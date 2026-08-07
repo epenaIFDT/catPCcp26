@@ -233,14 +233,15 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 10px 16px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   background: white;
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
+  min-height: 44px;
 }
 
 .filter-dropdown-btn::after {
@@ -319,11 +320,12 @@ body {
 .filter-checkbox-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 8px;
+  gap: 12px;
+  padding: 10px 10px;
   border-radius: 6px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .filter-checkbox-item:hover {
@@ -332,8 +334,8 @@ body {
 
 .filter-checkbox-item input {
   accent-color: var(--primary);
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
 }
 
@@ -343,13 +345,18 @@ body {
 
 .filter-option-count {
   flex-shrink: 0;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-light);
 }
 
 .filter-checkbox-item.disabled {
-  opacity: 0.4;
+  opacity: 0.6;
   cursor: not-allowed;
+}
+
+.filter-checkbox-item.disabled .filter-option-label {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-light);
 }
 
 .filter-checkbox-item.disabled:hover {
@@ -388,19 +395,20 @@ body {
 }
 
 .pill-filter-label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--text-light);
   margin-right: 2px;
 }
 
 .pill-btn {
-  padding: 6px 12px;
+  padding: 8px 14px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: white;
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
+  min-height: 40px;
 }
 
 .pill-btn:hover { border-color: var(--primary); }
@@ -424,12 +432,12 @@ body {
 .filter-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 8px 5px 12px;
+  gap: 8px;
+  padding: 6px 8px 6px 14px;
   border-radius: 999px;
   background: var(--primary-light);
   color: var(--primary);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -437,15 +445,16 @@ body {
   border: none;
   background: rgba(26, 86, 219, 0.15);
   color: var(--primary);
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .filter-chip button:hover { background: var(--primary); color: white; }
@@ -472,6 +481,22 @@ body {
 }
 
 .results-count strong { color: var(--text); }
+
+.select-all-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.select-all-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
 
 .sort-controls {
   display: flex;
@@ -690,6 +715,14 @@ body {
   .filter-dropdown-btn {
     width: 100%;
     justify-content: space-between;
+    font-size: 1rem;
+    padding: 13px 16px;
+  }
+
+  .filter-count {
+    min-width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
   }
 
   .filter-dropdown-panel {
@@ -698,16 +731,72 @@ body {
     width: auto;
   }
 
+  .filter-panel-header {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+  }
+
+  .filter-panel-close {
+    font-size: 1.2rem;
+    padding: 6px 10px;
+  }
+
+  .filter-panel-list {
+    max-height: 45vh;
+  }
+
+  .filter-checkbox-item {
+    font-size: 1rem;
+    padding: 13px 10px;
+  }
+
+  .filter-checkbox-item input {
+    width: 22px;
+    height: 22px;
+  }
+
+  .filter-panel-clear {
+    font-size: 0.9rem;
+    padding: 6px 4px;
+  }
+
   .price-range,
   .filters-toggle,
   .btn-clear-filters {
-    flex: 1 1 calc(50% - 8px);
+    flex: 1 1 100%;
     justify-content: center;
+    font-size: 0.95rem;
+    padding: 12px;
   }
 
   .pill-filter {
     flex: 1 1 100%;
     justify-content: space-between;
+  }
+
+  .pill-filter-label {
+    font-size: 0.9rem;
+  }
+
+  .pill-btn {
+    flex: 1;
+    font-size: 0.9rem;
+    padding: 10px 8px;
+  }
+
+  .filter-chip {
+    font-size: 0.9rem;
+    padding: 8px 10px 8px 16px;
+  }
+
+  .filter-chip button {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+
+  .select-all-label {
+    font-size: 0.95rem;
   }
 
   .results-header {
@@ -761,6 +850,20 @@ body {
   border-radius: 6px;
   font-size: 0.85rem;
 }
+
+/* Reafirma el ajuste móvil de .price-range input: esta regla debe ir
+   después de la base de arriba para ganar en la cascada (misma
+   especificidad, gana la declarada más tarde). */
+@media (max-width: 768px) {
+  .price-range input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    font-size: 0.95rem;
+    padding: 10px 8px;
+  }
+}
+
 /* === OPTIMIZACIÓN DE RENDIMIENTO === */
 .product-card {
   content-visibility: auto;

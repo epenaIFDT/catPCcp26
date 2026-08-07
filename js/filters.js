@@ -33,7 +33,7 @@ const MULTI_FILTER_KEYS = [
   { key: 'procesador', label: 'Procesador', field: 'procesador' },
   { key: 'ram', label: 'RAM', field: 'ram' },
   { key: 'almacenamiento', label: 'Almacenamiento', field: 'almacenamiento' },
-  { key: 'so', label: 'Sistema Op.', field: 'sistemaOperativo' },
+  { key: 'so', label: 'Sistema Operativo', field: 'sistemaOperativo' },
   { key: 'software', label: 'Software', field: 'software' },
   { key: 'case', label: 'Gabinete', field: 'case' },
   { key: 'fuente', label: 'Fuente de Poder', field: 'fuente' },
@@ -192,6 +192,7 @@ function applyFilters() {
     renderProducts(true);
     renderActiveFilterChips();
     refreshFilterCounts(ctx);
+    updateSelectAllUI();
     showLoading(false);
   }, 50);
 }
@@ -433,6 +434,40 @@ function clearSelection() {
   // Actualizar solo las cards que estaban seleccionadas
   previousSelection.forEach(id => updateCardSelection(id));
   updateSelectionBar();
+
+  const selectAllCb = document.getElementById('select-all-filtered');
+  if (selectAllCb) selectAllCb.checked = false;
+}
+
+// Selecciona/deselecciona TODOS los productos que cumplen los filtros
+// actuales (no solo los ya renderizados por la paginación), para poder
+// enviarlos completos por WhatsApp o copiar el resumen.
+function toggleSelectAllFiltered(checked) {
+  if (checked) {
+    filteredProducts.forEach(p => selectedProducts.add(p.id));
+  } else {
+    selectedProducts.clear();
+  }
+
+  // Actualizar solo las cards ya renderizadas en pantalla, sin resetear
+  // la paginación ni recargar todo el grid.
+  document.querySelectorAll('.product-card').forEach(card => {
+    const id = card.dataset.id;
+    const isSelected = selectedProducts.has(id);
+    card.classList.toggle('selected', isSelected);
+    const cb = card.querySelector('.card-select');
+    if (cb) cb.checked = isSelected;
+  });
+
+  updateSelectionBar();
+}
+
+function updateSelectAllUI() {
+  const countEl = document.getElementById('select-all-count');
+  if (countEl) countEl.textContent = filteredProducts.length;
+
+  const cb = document.getElementById('select-all-filtered');
+  if (cb) cb.checked = false; // acción puntual, no un estado persistente
 }
 
 function updateSelectionBar() {
