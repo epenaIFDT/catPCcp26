@@ -322,31 +322,27 @@ function generateCardHTML(p) {
   const qty = selectedQuantities.get(p.id) || 1;
   const sinSpecs = CATEGORIAS_SIN_SPECS.includes(p.categoria);
 
-  const specsHTML = sinSpecs
-    ? `<div class="card-description">${getDescriptionSummary(p, 160)}</div>`
-    : `<div class="card-specs">
+  let specsHTML;
+  if (sinSpecs) {
+    specsHTML = `<div class="card-description">${getDescriptionSummary(p, 160)}</div>`;
+  } else {
+    // Solo se listan specs con dato real; nada de "N/A" ocupando espacio.
+    const items = [];
+    if (p.specs.procesador) items.push({ icon: '⚡', value: shortText(p.specs.procesador, 25) });
+    if (p.specs.ram) items.push({ icon: '💾', value: shortText(p.specs.ram, 20) });
+    if (p.specs.almacenamiento) items.push({ icon: '📀', value: shortText(p.specs.almacenamiento, 20) });
+    if (p.specs.sistemaOperativo) items.push({ icon: '🖥️', value: getOSShort(p.specs.sistemaOperativo) });
+    if (p.specs.pantalla) items.push({ icon: '🖵', value: shortText(p.specs.pantalla, 25) });
+    if (isDedicatedVideo(p.specs.tarjetaVideo)) items.push({ icon: '🎮', value: shortText(p.specs.tarjetaVideo, 25) });
+
+    specsHTML = items.length
+      ? `<div class="card-specs">${items.map(it => `
         <div class="spec-item">
-          <span class="spec-icon">⚡</span>
-          <span class="spec-value">${shortText(p.specs.procesador, 25)}</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">💾</span>
-          <span class="spec-value">${shortText(p.specs.ram, 20)}</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">📀</span>
-          <span class="spec-value">${shortText(p.specs.almacenamiento, 20)}</span>
-        </div>
-        <div class="spec-item">
-          <span class="spec-icon">🖥️</span>
-          <span class="spec-value">${getOSShort(p.specs.sistemaOperativo)}</span>
-        </div>
-        ${p.specs.pantalla ? `
-        <div class="spec-item">
-          <span class="spec-icon">🖵</span>
-          <span class="spec-value">${shortText(p.specs.pantalla, 25)}</span>
-        </div>` : ''}
-      </div>`;
+          <span class="spec-icon">${it.icon}</span>
+          <span class="spec-value">${it.value}</span>
+        </div>`).join('')}</div>`
+      : '';
+  }
 
   return `
     <div class="product-card ${isSelected ? 'selected' : ''}" data-id="${p.id}">
@@ -364,7 +360,10 @@ function generateCardHTML(p) {
       <div class="card-model">${p.nroParte}</div>
       ${specsHTML}
       <div class="card-footer">
-        <span class="card-price">$${p.precio.toLocaleString()}</span>
+        <div class="card-price-block">
+          <span class="card-price-label">Precio de lista (referencial)</span>
+          <span class="card-price">$${p.precio.toLocaleString()}</span>
+        </div>
         <div class="card-actions">
           <button onclick="viewDetail('${p.id}')" title="Ver detalle">👁️</button>
           ${p.fichaUrl ? `<button onclick="window.open('${p.fichaUrl}','_blank')" title="Ficha técnica">📄</button>` : ''}
@@ -436,9 +435,12 @@ function viewDetail(id) {
         </tr>
       `).join('')}
     </table>
-    <div style="margin-top:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-      <span style="font-size:1.5rem;font-weight:800;color:var(--success);">$${p.precio.toLocaleString()} USD</span>
-      ${p.fichaUrl ? `<a href="${p.fichaUrl}" target="_blank" class="btn btn-primary btn-sm">📄 Ver Ficha Técnica</a>` : ''}
+    <div style="margin-top:20px;">
+      <div style="font-size:0.8rem;color:var(--text-light);margin-bottom:2px;">Precio de lista (referencial)</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:1.5rem;font-weight:800;color:var(--success);">$${p.precio.toLocaleString()} USD</span>
+        ${p.fichaUrl ? `<a href="${p.fichaUrl}" target="_blank" class="btn btn-primary btn-sm">📄 Ver Ficha Técnica</a>` : ''}
+      </div>
     </div>
   `;
 

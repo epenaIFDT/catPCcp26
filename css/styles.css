@@ -647,6 +647,17 @@ body {
   border-top: 1px solid var(--border);
 }
 
+.card-price-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-price-label {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-bottom: 2px;
+}
+
 .card-price {
   font-size: 1.3rem;
   font-weight: 800;

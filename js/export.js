@@ -24,6 +24,12 @@ function getDescriptionSummary(p, maxLen) {
   return truncateText(sinPrefijo, maxLen);
 }
 
+// Tarjeta de video "real" (dedicada) vs el caso más común de gráficos
+// integrados, que no aporta información útil para mostrar/compartir.
+function isDedicatedVideo(video) {
+  return !!video && !video.toUpperCase().includes('INTEGRAD');
+}
+
 // Bloque de specs de un producto para el mensaje de WhatsApp (con viñetas).
 // Evita mostrar "Procesador: N/A" etc. en categorías que no tienen esos
 // datos (monitores, pantallas interactivas) — se usa la descripción en su lugar.
@@ -39,7 +45,7 @@ function buildItemSpecsWhatsApp(p) {
   if (p.specs.pantalla) block += `• Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
   block += `• Sistema operativo: ${formatOS(p.specs.sistemaOperativo)}\n`;
   if (p.specs.software && p.specs.software !== 'NO') block += `• Office: ${formatSoftware(p.specs.software)}\n`;
-  if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
+  if (isDedicatedVideo(p.specs.tarjetaVideo)) {
     block += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
   }
   if (p.specs.case) block += `• Gabinete: ${p.specs.case}\n`;
@@ -60,39 +66,48 @@ function buildWhatsAppFullText(products, fecha, ref) {
     text += `*${i + 1}. ${getCardTitle(p)}* (Código: ${p.nroParte})\n`;
     text += buildItemSpecsWhatsApp(p);
     text += qty > 1
-      ? `Cantidad: ${qty} — c/u $${p.precio.toLocaleString('en-US')} — Subtotal: *$${subtotal.toLocaleString('en-US')} USD*\n`
-      : `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n`;
+      ? `Cantidad: ${qty} — Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} c/u — Total item: *$${subtotal.toLocaleString('en-US')} USD*\n`
+      : `Precio de lista (referencial): *$${p.precio.toLocaleString('en-US')} USD*\n`;
 
-    // Separador liviano entre productos (no entre el último y el total)
+    // Separador liviano entre productos
     text += i < products.length - 1 ? '─────────────────────\n\n' : '\n';
   });
 
-  const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
-  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
-  const plural = totalUnidades === 1 ? 'equipo' : 'equipos';
-  text += `*Total: $${total.toLocaleString('en-US')} USD* (${totalUnidades} ${plural})\n\n`;
-  text += `_Precios de referencia, sujetos a disponibilidad._\n`;
+  // Con un solo producto, el total coincide con su propio precio: se
+  // muestra igual por claridad. Con varios, cada item ya trae su propio
+  // total y no se suma un gran total al final (a pedido).
+  if (products.length === 1) {
+    const total = products[0].precio * getQty(products[0]);
+    text += `*Total: $${total.toLocaleString('en-US')} USD*\n\n`;
+  }
+
+  text += `_Precios de lista referenciales, sujetos a disponibilidad._\n`;
   text += `Cotizado por: ${ref}\n`;
   text += `VASTEC - Soluciones Tecnológicas`;
 
   return text;
 }
 
-// Versión mínima (modelo, código, cantidad, precio) para cuando la
-// selección es demasiado grande para el mensaje completo.
+// Versión mínima (modelo, código, cantidad, precio de lista) para cuando
+// la selección es demasiado grande para el mensaje completo.
 function buildWhatsAppCompactText(products, fecha, ref) {
-  let text = `Cotización VASTEC (resumen) - ${fecha}\n\n`;
+  let text = `Cotización VASTEC (resumen) - ${fecha}\n`;
+  text += `Precios de lista referenciales\n\n`;
 
   products.forEach((p, i) => {
     const qty = getQty(p);
     const subtotal = p.precio * qty;
-    text += `${i + 1}. ${getCardTitle(p)} | ${p.nroParte} | x${qty} | $${subtotal.toLocaleString('en-US')}\n`;
+    text += `${i + 1}. ${getCardTitle(p)} | ${p.nroParte} | x${qty} | Total item: $${subtotal.toLocaleString('en-US')}\n`;
   });
 
-  const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
-  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
-  text += `\n*Total: $${total.toLocaleString('en-US')} USD* (${totalUnidades} equipo(s))\n`;
-  text += `Cotizado por: ${ref}\n`;
+  // Sin gran total al final cuando hay más de un producto (a pedido);
+  // con uno solo, coincide con su propio total y se muestra igual.
+  if (products.length === 1) {
+    const total = products[0].precio * getQty(products[0]);
+    text += `\n*Total: $${total.toLocaleString('en-US')} USD*\n`;
+  }
+
+  text += `\nCotizado por: ${ref}\n`;
   text += `VASTEC - Soluciones Tecnológicas`;
 
   return text;
@@ -112,7 +127,7 @@ function buildItemSpecsSummary(p) {
   if (p.specs.pantalla) block += `   Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
   block += `   SO: ${formatOS(p.specs.sistemaOperativo)}\n`;
   if (p.specs.software && p.specs.software !== 'NO') block += `   Office: ${formatSoftware(p.specs.software)}\n`;
-  if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
+  if (isDedicatedVideo(p.specs.tarjetaVideo)) {
     block += `   GPU: ${p.specs.tarjetaVideo}\n`;
   }
   if (p.specs.case) block += `   Gabinete: ${p.specs.case}\n`;
@@ -178,6 +193,7 @@ async function copySummary() {
   text += `Fecha: ${new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })}\n`;
   text += `Ref: ${getSession()?.nombre || 'Equipo Ventas'}\n`;
   text += `Items: ${products.length} (${totalUnidades} unidad(es))\n`;
+  text += 'Precios de lista referenciales\n';
   text += '----------------------------------------\n\n';
 
   products.forEach((p, i) => {
@@ -187,18 +203,22 @@ async function copySummary() {
     text += `${i + 1}. ${getCardTitle(p)} (Codigo: ${p.nroParte})\n`;
     text += buildItemSpecsSummary(p);
     text += qty > 1
-      ? `   Cantidad: ${qty} - Precio unitario: $${p.precio.toLocaleString('en-US')} USD - Subtotal: $${subtotal.toLocaleString('en-US')} USD\n`
-      : `   Precio: $${p.precio.toLocaleString('en-US')} USD\n`;
+      ? `   Cantidad: ${qty} - Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD c/u - Total item: $${subtotal.toLocaleString('en-US')} USD\n`
+      : `   Precio de lista (referencial): $${p.precio.toLocaleString('en-US')} USD\n`;
 
     text += i < products.length - 1 ? '   ....................................\n\n' : '\n';
   });
 
-  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
   text += '----------------------------------------\n';
-  text += `TOTAL: $${total.toLocaleString('en-US')} USD\n`;
-  text += `${totalUnidades} equipo(s)\n`;
-  text += '----------------------------------------\n';
-  text += 'Precios de referencia. Consultar disponibilidad.\n';
+  // Con un solo producto, el total coincide con su propio precio: se
+  // muestra igual por claridad. Con varios, cada item ya trae su propio
+  // total y no se suma un gran total al final (a pedido).
+  if (products.length === 1) {
+    const total = products[0].precio * getQty(products[0]);
+    text += `TOTAL: $${total.toLocaleString('en-US')} USD\n`;
+    text += '----------------------------------------\n';
+  }
+  text += 'Precios de lista referenciales. Consultar disponibilidad.\n';
   text += 'VASTEC - Soluciones Tecnologicas';
 
   try {
