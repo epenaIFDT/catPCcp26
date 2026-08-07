@@ -314,20 +314,26 @@ function renderProducts(reset = false) {
   }
 }
 
+// Categorías sin procesador/RAM/SO (no aplican): se muestra un resumen de
+// texto en su lugar, tomado de la descripción original del Excel.
+const CATEGORIAS_SIN_SPECS = ['MONITOR', 'PANTALLA INTERACTIVA'];
+
+function getShortDescription(p) {
+  if (!p.descripcion) return 'Sin descripción disponible.';
+  // Quita el prefijo "CATEGORIA : " (ya se muestra aparte como badge)
+  const sinPrefijo = p.descripcion.replace(/^[^:]+:\s*/, '');
+  return shortText(sinPrefijo, 160);
+}
+
 // Generar HTML de una card (función pura, rápida)
 function generateCardHTML(p) {
   const isSelected = selectedProducts.has(p.id);
-  return `
-    <div class="product-card ${isSelected ? 'selected' : ''}" data-id="${p.id}">
-      <div class="card-header">
-        <span class="card-category">${getCategoryShort(p.categoria)}</span>
-        <input type="checkbox" class="card-select"
-          ${isSelected ? 'checked' : ''}
-          onchange="toggleSelect('${p.id}')">
-      </div>
-      <div class="card-title">${p.marca} ${p.modelo}</div>
-      <div class="card-model">${p.nroParte}</div>
-      <div class="card-specs">
+  const qty = selectedQuantities.get(p.id) || 1;
+  const sinSpecs = CATEGORIAS_SIN_SPECS.includes(p.categoria);
+
+  const specsHTML = sinSpecs
+    ? `<div class="card-description">${getShortDescription(p)}</div>`
+    : `<div class="card-specs">
         <div class="spec-item">
           <span class="spec-icon">⚡</span>
           <span class="spec-value">${shortText(p.specs.procesador, 25)}</span>
@@ -344,7 +350,28 @@ function generateCardHTML(p) {
           <span class="spec-icon">🖥️</span>
           <span class="spec-value">${getOSShort(p.specs.sistemaOperativo)}</span>
         </div>
+        ${p.specs.pantalla ? `
+        <div class="spec-item">
+          <span class="spec-icon">🖵</span>
+          <span class="spec-value">${shortText(p.specs.pantalla, 25)}</span>
+        </div>` : ''}
+      </div>`;
+
+  return `
+    <div class="product-card ${isSelected ? 'selected' : ''}" data-id="${p.id}">
+      <div class="card-header">
+        <span class="card-category">${getCategoryShort(p.categoria)}</span>
+        <div class="card-header-actions">
+          <input type="number" class="card-qty" min="1" value="${qty}"
+            title="Cantidad" onchange="updateQuantity('${p.id}', this)">
+          <input type="checkbox" class="card-select"
+            ${isSelected ? 'checked' : ''}
+            onchange="toggleSelect('${p.id}')">
+        </div>
       </div>
+      <div class="card-title">${getCardTitle(p)}</div>
+      <div class="card-model">${p.nroParte}</div>
+      ${specsHTML}
       <div class="card-footer">
         <span class="card-price">$${p.precio.toLocaleString()}</span>
         <div class="card-actions">
@@ -399,17 +426,22 @@ function viewDetail(id) {
   const modal = document.getElementById('modal-overlay');
   const content = document.getElementById('modal-content');
 
+  // Las specs vacías (procesador/RAM/SO en un monitor, por ejemplo) se
+  // omiten de la tabla en vez de mostrar "N/A" en cada fila.
+  const specRows = Object.entries(p.specs).filter(([, val]) => val === true || val === false || (val !== '' && val != null));
+
   content.innerHTML = `
     <div class="modal-header">
-      <h2>${p.marca} ${p.modelo}</h2>
+      <h2>${getCardTitle(p)}</h2>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <p style="color:var(--text-light);margin-bottom:16px;">${p.nroParte} | ${p.categoria}</p>
+    ${p.descripcion ? `<p style="font-size:0.9rem;line-height:1.5;margin-bottom:16px;padding:10px;background:var(--bg);border-radius:8px;">${p.descripcion}</p>` : ''}
     <table style="width:100%;font-size:0.9rem;border-collapse:collapse;">
-      ${Object.entries(p.specs).map(([key, val]) => `
+      ${specRows.map(([key, val]) => `
         <tr style="border-bottom:1px solid var(--border);">
           <td style="padding:8px;font-weight:600;text-transform:capitalize;">${formatKey(key)}</td>
-          <td style="padding:8px;">${val === true ? '✅ Sí' : val === false ? '❌ No' : val || 'N/A'}</td>
+          <td style="padding:8px;">${val === true ? '✅ Sí' : val === false ? '❌ No' : val}</td>
         </tr>
       `).join('')}
     </table>

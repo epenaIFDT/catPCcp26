@@ -4,6 +4,9 @@
 let allProducts = [];
 let filteredProducts = [];
 let selectedProducts = new Set();
+// Cantidad por producto seleccionado (id -> cantidad). Se conserva aunque
+// se deseleccione, por si vuelve a marcarse el mismo producto después.
+let selectedQuantities = new Map();
 
 // Filtros activos: sets = selección múltiple (OR dentro de la categoría,
 // AND entre categorías); los booleanos de conectividad son de 3 estados
@@ -404,11 +407,20 @@ function toggleSelect(id) {
     selectedProducts.delete(id);
   } else {
     selectedProducts.add(id);
+    if (!selectedQuantities.has(id)) selectedQuantities.set(id, 1);
   }
 
   // Actualizar SOLO la card específica (sin re-render)
   updateCardSelection(id);
   updateSelectionBar();
+}
+
+// Cambia la cantidad de un producto ya seleccionado (campo numérico en la card)
+function updateQuantity(id, inputEl) {
+  let qty = parseInt(inputEl.value, 10);
+  if (!qty || qty < 1) qty = 1;
+  inputEl.value = qty;
+  selectedQuantities.set(id, qty);
 }
 
 function updateCardSelection(id) {
@@ -417,10 +429,12 @@ function updateCardSelection(id) {
 
   const isSelected = selectedProducts.has(id);
   const checkbox = card.querySelector('.card-select');
+  const qtyInput = card.querySelector('.card-qty');
 
   if (isSelected) {
     card.classList.add('selected');
     if (checkbox) checkbox.checked = true;
+    if (qtyInput) qtyInput.value = selectedQuantities.get(id) || 1;
   } else {
     card.classList.remove('selected');
     if (checkbox) checkbox.checked = false;
@@ -430,6 +444,7 @@ function updateCardSelection(id) {
 function clearSelection() {
   const previousSelection = [...selectedProducts];
   selectedProducts.clear();
+  selectedQuantities.clear();
 
   // Actualizar solo las cards que estaban seleccionadas
   previousSelection.forEach(id => updateCardSelection(id));
@@ -444,9 +459,13 @@ function clearSelection() {
 // enviarlos completos por WhatsApp o copiar el resumen.
 function toggleSelectAllFiltered(checked) {
   if (checked) {
-    filteredProducts.forEach(p => selectedProducts.add(p.id));
+    filteredProducts.forEach(p => {
+      selectedProducts.add(p.id);
+      if (!selectedQuantities.has(p.id)) selectedQuantities.set(p.id, 1);
+    });
   } else {
     selectedProducts.clear();
+    selectedQuantities.clear();
   }
 
   // Actualizar solo las cards ya renderizadas en pantalla, sin resetear
@@ -457,6 +476,8 @@ function toggleSelectAllFiltered(checked) {
     card.classList.toggle('selected', isSelected);
     const cb = card.querySelector('.card-select');
     if (cb) cb.checked = isSelected;
+    const qtyInput = card.querySelector('.card-qty');
+    if (qtyInput) qtyInput.value = selectedQuantities.get(id) || 1;
   });
 
   updateSelectionBar();

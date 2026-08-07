@@ -1,17 +1,21 @@
-function shareWhatsApp() {
-  const products = allProducts.filter(p => selectedProducts.has(p.id));
-  if (products.length === 0) {
-    showToast('⚠️ No hay productos seleccionados');
-    return;
-  }
+function getQty(p) {
+  return selectedQuantities.get(p.id) || 1;
+}
 
-  const fecha = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
-  const ref = getSession()?.nombre || 'Equipo Ventas';
+function getCardTitle(p) {
+  // Algunos productos (monitores) no traen modelo en el Excel origen;
+  // sin esto el título quedaría solo con la marca ("VASTEC").
+  return p.modelo ? `${p.marca} ${p.modelo}` : `${p.marca} — ${p.nroParte}`;
+}
 
+function buildWhatsAppFullText(products, fecha, ref) {
   let text = `Hola, te comparto la cotización VASTEC del ${fecha}:\n\n`;
 
   products.forEach((p, i) => {
-    text += `*${i + 1}. ${p.marca} ${p.modelo}*\n`;
+    const qty = getQty(p);
+    const subtotal = p.precio * qty;
+
+    text += `*${i + 1}. ${getCardTitle(p)}*\n`;
     text += `Código: ${p.nroParte}\n`;
     text += `• Procesador: ${formatProcessor(p.specs.procesador)}\n`;
     text += `• RAM: ${formatRAM(p.specs.ram)}\n`;
@@ -44,29 +48,73 @@ function shareWhatsApp() {
     }
 
     text += `• Garantía: ${p.specs.garantia}\n`;
-    text += `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n\n`;
+    text += `Cantidad: ${qty}\n`;
+    text += qty > 1
+      ? `Precio: $${p.precio.toLocaleString('en-US')} USD c/u — Subtotal: *$${subtotal.toLocaleString('en-US')} USD*\n\n`
+      : `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n\n`;
   });
 
-  const total = products.reduce((sum, p) => sum + p.precio, 0);
-  const plural = products.length === 1 ? 'equipo' : 'equipos';
-  text += `*Total: $${total.toLocaleString('en-US')} USD* (${products.length} ${plural})\n\n`;
+  const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
+  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
+  const plural = totalUnidades === 1 ? 'equipo' : 'equipos';
+  text += `*Total: $${total.toLocaleString('en-US')} USD* (${totalUnidades} ${plural})\n\n`;
   text += `_Precios de referencia, sujetos a disponibilidad._\n`;
   text += `Cotizado por: ${ref}\n`;
   text += `VASTEC - Soluciones Tecnológicas`;
 
+  return text;
+}
+
+// Versión mínima (modelo, código, cantidad, precio) para cuando la
+// selección es demasiado grande para el mensaje completo.
+function buildWhatsAppCompactText(products, fecha, ref) {
+  let text = `Cotización VASTEC (resumen) - ${fecha}\n\n`;
+
+  products.forEach((p, i) => {
+    const qty = getQty(p);
+    const subtotal = p.precio * qty;
+    text += `${i + 1}. ${getCardTitle(p)} | ${p.nroParte} | x${qty} | $${subtotal.toLocaleString('en-US')}\n`;
+  });
+
+  const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
+  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
+  text += `\n*Total: $${total.toLocaleString('en-US')} USD* (${totalUnidades} equipo(s))\n`;
+  text += `Cotizado por: ${ref}\n`;
+  text += `VASTEC - Soluciones Tecnológicas`;
+
+  return text;
+}
+
+function shareWhatsApp() {
+  const products = allProducts.filter(p => selectedProducts.has(p.id));
+  if (products.length === 0) {
+    showToast('⚠️ No hay productos seleccionados');
+    return;
+  }
+
+  const fecha = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' });
+  const ref = getSession()?.nombre || 'Equipo Ventas';
+
   // Límite práctico aproximado: mensajes muy largos pueden no abrirse
   // completos (o fallar) al pasarlos como parámetro de la URL de WhatsApp.
-  // No es un límite oficial exacto, pero por encima de esto conviene avisar.
+  // No es un límite oficial exacto, pero por encima de esto conviene reducir.
   const WHATSAPP_SAFE_LIMIT = 3000;
+
+  let text = buildWhatsAppFullText(products, fecha, ref);
+  let usedCompact = false;
+
   if (text.length > WHATSAPP_SAFE_LIMIT) {
-    const continuar = confirm(
-      `El mensaje tiene ${text.length.toLocaleString('es-PE')} caracteres para ${products.length} equipo(s), ` +
-      `por encima del límite práctico recomendado (~${WHATSAPP_SAFE_LIMIT.toLocaleString('es-PE')}) para que WhatsApp lo abra completo.\n\n` +
-      `Es posible que el mensaje se corte o no abra correctamente.\n\n` +
-      `Sugerencia: reduce la selección, o usa "Copiar resumen" para pegarlo en un documento.\n\n` +
-      `¿Deseas intentar abrir WhatsApp de todas formas?`
-    );
-    if (!continuar) return;
+    const compactText = buildWhatsAppCompactText(products, fecha, ref);
+    if (compactText.length > WHATSAPP_SAFE_LIMIT) {
+      alert(
+        `La selección es demasiado grande incluso en versión resumida ` +
+        `(${compactText.length.toLocaleString('es-PE')} caracteres para ${products.length} producto(s)).\n\n` +
+        `Reduce la cantidad de productos seleccionados para poder compartirlos por WhatsApp.`
+      );
+      return;
+    }
+    text = compactText;
+    usedCompact = true;
   }
 
   // Se usa siempre el enlace directo de WhatsApp (wa.me) en vez de navigator.share():
@@ -74,6 +122,10 @@ function shareWhatsApp() {
   // que corrompe los emojis antes de que lleguen a la app de destino.
   const encoded = encodeURIComponent(text);
   window.open(`https://wa.me/?text=${encoded}`, '_blank');
+
+  if (usedCompact) {
+    showToast('⚠️ Selección muy grande: se envió una versión resumida (modelo, código, cantidad y precio)');
+  }
 }
 
 async function copySummary() {
@@ -83,14 +135,19 @@ async function copySummary() {
     return;
   }
 
+  const totalUnidades = products.reduce((sum, p) => sum + getQty(p), 0);
+
   let text = 'COTIZACION VASTEC\n';
   text += `Fecha: ${new Date().toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })}\n`;
   text += `Ref: ${getSession()?.nombre || 'Equipo Ventas'}\n`;
-  text += `Items: ${products.length}\n`;
+  text += `Items: ${products.length} (${totalUnidades} unidad(es))\n`;
   text += '----------------------------------------\n\n';
 
   products.forEach((p, i) => {
-    text += `${i + 1}. ${p.marca} ${p.modelo}\n`;
+    const qty = getQty(p);
+    const subtotal = p.precio * qty;
+
+    text += `${i + 1}. ${getCardTitle(p)}\n`;
     text += `   Codigo: ${p.nroParte}\n`;
     text += `   CPU: ${formatProcessor(p.specs.procesador)}\n`;
     text += `   RAM: ${formatRAM(p.specs.ram)}\n`;
@@ -123,13 +180,16 @@ async function copySummary() {
     }
 
     text += `   Garantia: ${p.specs.garantia}\n`;
-    text += `   Precio: $${p.precio.toLocaleString('en-US')} USD\n\n`;
+    text += `   Cantidad: ${qty}\n`;
+    text += qty > 1
+      ? `   Precio unitario: $${p.precio.toLocaleString('en-US')} USD - Subtotal: $${subtotal.toLocaleString('en-US')} USD\n\n`
+      : `   Precio: $${p.precio.toLocaleString('en-US')} USD\n\n`;
   });
 
-  const total = products.reduce((sum, p) => sum + p.precio, 0);
+  const total = products.reduce((sum, p) => sum + p.precio * getQty(p), 0);
   text += '----------------------------------------\n';
   text += `TOTAL: $${total.toLocaleString('en-US')} USD\n`;
-  text += `${products.length} equipo(s)\n`;
+  text += `${totalUnidades} equipo(s)\n`;
   text += '----------------------------------------\n';
   text += 'Precios de referencia. Consultar disponibilidad.\n';
   text += 'VASTEC - Soluciones Tecnologicas';

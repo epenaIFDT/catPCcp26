@@ -555,11 +555,31 @@ body {
   font-weight: 600;
 }
 
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .card-select {
   width: 20px;
   height: 20px;
   cursor: pointer;
   accent-color: var(--primary);
+}
+
+.card-qty {
+  display: none;
+  width: 52px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.product-card.selected .card-qty {
+  display: inline-block;
 }
 
 .card-title {
@@ -579,6 +599,16 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 6px;
   margin-bottom: 12px;
+}
+
+.card-description {
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  padding: 10px;
+  background: var(--bg);
+  border-radius: 8px;
 }
 
 .spec-item {
@@ -806,6 +836,17 @@ body {
 
   .card-specs {
     grid-template-columns: 1fr;
+  }
+
+  .card-qty {
+    width: 60px;
+    padding: 8px 6px;
+    font-size: 0.95rem;
+  }
+
+  .card-select {
+    width: 24px;
+    height: 24px;
   }
 }
 
