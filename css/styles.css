@@ -184,33 +184,6 @@ body {
   align-items: center;
 }
 
-.filter-group {
-  position: relative;
-}
-
-.filter-select {
-  padding: 8px 32px 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.85rem;
-  background: white;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-}
-
-.filter-select:focus {
-  outline: none;
-  border-color: var(--primary);
-}
-
-.filter-select.active {
-  border-color: var(--primary);
-  background-color: var(--primary-light);
-}
-
 .filters-toggle {
   padding: 8px 16px;
   border: 1px dashed var(--border);
@@ -226,6 +199,22 @@ body {
   color: var(--primary);
 }
 
+.btn-clear-filters {
+  padding: 8px 16px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--danger);
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-clear-filters:hover {
+  background: var(--danger);
+  color: white;
+}
+
 .filters-advanced {
   display: none;
   margin-top: 12px;
@@ -233,7 +222,233 @@ body {
   border-top: 1px solid var(--border);
 }
 
-.filters-advanced.show { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters-advanced.show { display: flex; flex-wrap: wrap; gap: 16px; }
+
+/* === FILTER DROPDOWN (selección múltiple) === */
+.filter-dropdown {
+  position: relative;
+}
+
+.filter-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  background: white;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-dropdown-btn::after {
+  content: '▾';
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-left: 2px;
+}
+
+.filter-dropdown-btn:hover,
+.filter-dropdown-btn.open {
+  border-color: var(--primary);
+}
+
+.filter-dropdown-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.filter-count {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.filter-dropdown-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 250;
+  width: max(240px, min(320px, 90vw));
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.filter-dropdown-panel.show { display: block; }
+
+.filter-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.filter-panel-close {
+  border: none;
+  background: none;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+}
+
+.filter-panel-list {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.filter-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.filter-checkbox-item:hover {
+  background: var(--bg);
+}
+
+.filter-checkbox-item input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.filter-option-label {
+  flex: 1;
+}
+
+.filter-option-count {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.filter-checkbox-item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.filter-checkbox-item.disabled:hover {
+  background: none;
+}
+
+.filter-panel-footer {
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+  text-align: right;
+}
+
+.filter-panel-clear {
+  border: none;
+  background: none;
+  color: var(--primary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filter-panel-clear:hover { text-decoration: underline; }
+
+.filter-empty {
+  padding: 16px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* === PILL FILTERS (LAN/WLAN/HDMI/VGA/Óptica: 3 estados) === */
+.pill-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pill-filter-label {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-right: 2px;
+}
+
+.pill-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: white;
+  color: var(--text);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pill-btn:hover { border-color: var(--primary); }
+
+.pill-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* === CHIPS DE FILTROS ACTIVOS === */
+.active-filters-bar {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 12px;
+  border-radius: 999px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.filter-chip button {
+  border: none;
+  background: rgba(26, 86, 219, 0.15);
+  color: var(--primary);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-chip button:hover { background: var(--primary); color: white; }
 
 /* === RESULTS === */
 .results-container {
@@ -465,14 +680,34 @@ body {
   }
 
   .filters-row {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 8px;
+    flex-wrap: wrap;
   }
 
-  .filter-select {
-    white-space: nowrap;
-    min-width: fit-content;
+  .filter-dropdown {
+    flex: 1 1 100%;
+  }
+
+  .filter-dropdown-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-dropdown-panel {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+
+  .price-range,
+  .filters-toggle,
+  .btn-clear-filters {
+    flex: 1 1 calc(50% - 8px);
+    justify-content: center;
+  }
+
+  .pill-filter {
+    flex: 1 1 100%;
+    justify-content: space-between;
   }
 
   .results-header {

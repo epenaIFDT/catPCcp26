@@ -5,6 +5,44 @@ let allProducts = [];
 let filteredProducts = [];
 let selectedProducts = new Set();
 
+// Filtros activos: sets = selección múltiple (OR dentro de la categoría,
+// AND entre categorías); los booleanos de conectividad son de 3 estados
+// ('' = todos, 'si', 'no').
+let activeFilters = {
+  categoria: new Set(),
+  procesador: new Set(),
+  ram: new Set(),
+  almacenamiento: new Set(),
+  so: new Set(),
+  software: new Set(),
+  case: new Set(),
+  fuente: new Set(),
+  video: new Set(),
+  chipset: new Set(),
+  lan: '',
+  wlan: '',
+  hdmi: '',
+  vga: '',
+  optica: ''
+};
+
+// key = id usado en el DOM/activeFilters, field = propiedad en specs
+// (null => usa p.categoria directamente en vez de p.specs.field)
+const MULTI_FILTER_KEYS = [
+  { key: 'categoria', label: 'Categoría', field: null },
+  { key: 'procesador', label: 'Procesador', field: 'procesador' },
+  { key: 'ram', label: 'RAM', field: 'ram' },
+  { key: 'almacenamiento', label: 'Almacenamiento', field: 'almacenamiento' },
+  { key: 'so', label: 'Sistema Op.', field: 'sistemaOperativo' },
+  { key: 'software', label: 'Software', field: 'software' },
+  { key: 'case', label: 'Gabinete', field: 'case' },
+  { key: 'fuente', label: 'Fuente de Poder', field: 'fuente' },
+  { key: 'video', label: 'Tarjeta de Video', field: 'tarjetaVideo' },
+  { key: 'chipset', label: 'Chipset', field: 'chipset' }
+];
+
+const BOOL_FILTER_KEYS = ['lan', 'wlan', 'hdmi', 'vga', 'optica'];
+
 // Paginación
 const PAGE_SIZE = 24;
 let currentPage = 0;
@@ -47,7 +85,26 @@ function getUniqueValues(field) {
       }
     }
   }
-  return [...values].sort();
+  return sortFilterOptions(field, [...values]);
+}
+
+// Orden automático: numérico para RAM/almacenamiento, alfabético (es) para el resto
+function sortFilterOptions(field, arr) {
+  if (field === 'ram') {
+    return arr.sort((a, b) => extractGB(a) - extractGB(b));
+  }
+  if (field === 'almacenamiento') {
+    return arr.sort((a, b) => extractStorageGB(a) - extractStorageGB(b));
+  }
+  return arr.sort((a, b) => a.localeCompare(b, 'es'));
+}
+
+function extractStorageGB(str) {
+  if (!str) return 0;
+  const match = str.match(/(\d+(?:\.\d+)?)\s*(GB|TB)/i);
+  if (!match) return 0;
+  const num = parseFloat(match[1]);
+  return match[2].toUpperCase() === 'TB' ? num * 1024 : num;
 }
 
 function getPriceRange() {
@@ -66,70 +123,186 @@ function getPriceRange() {
 // ============================================
 // FILTRADO OPTIMIZADO
 // ============================================
-function applyFilters() {
-  const categoria = document.getElementById('filter-categoria')?.value || '';
-  const procesador = document.getElementById('filter-procesador')?.value || '';
-  const ram = document.getElementById('filter-ram')?.value || '';
-  const almacenamiento = document.getElementById('filter-almacenamiento')?.value || '';
-  const so = document.getElementById('filter-so')?.value || '';
-  const software = document.getElementById('filter-software')?.value || '';
-  const precioMin = parseFloat(document.getElementById('price-min')?.value) || 0;
-  const precioMax = parseFloat(document.getElementById('price-max')?.value) || Infinity;
-  const searchText = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+function getFilterContext() {
+  return {
+    precioMin: parseFloat(document.getElementById('price-min')?.value) || 0,
+    precioMax: parseFloat(document.getElementById('price-max')?.value) || Infinity,
+    searchText: (document.getElementById('search-input')?.value || '').toLowerCase().trim()
+  };
+}
 
-  // Filtros avanzados
-  const lan = document.getElementById('filter-lan')?.value || '';
-  const wlan = document.getElementById('filter-wlan')?.value || '';
-  const hdmi = document.getElementById('filter-hdmi')?.value || '';
-  const vga = document.getElementById('filter-vga')?.value || '';
-  const optica = document.getElementById('filter-optica')?.value || '';
+// skip: key de un filtro a ignorar (usado para calcular cuántos resultados
+// tendría CADA opción de ese mismo filtro si se le sumara una selección más)
+function productMatchesFilters(p, ctx, skip) {
+  if (!p.specs) return false;
+  const f = activeFilters;
+
+  for (let i = 0; i < MULTI_FILTER_KEYS.length; i++) {
+    const mf = MULTI_FILTER_KEYS[i];
+    if (mf.key === skip) continue;
+    const set = f[mf.key];
+    if (!set.size) continue;
+    const val = mf.field === null ? p.categoria : p.specs[mf.field];
+    if (!set.has(val)) return false;
+  }
+
+  if (p.precio < ctx.precioMin || p.precio > ctx.precioMax) return false;
+
+  if (skip !== 'lan') {
+    if (f.lan === 'si' && !p.specs.lan) return false;
+    if (f.lan === 'no' && p.specs.lan) return false;
+  }
+  if (skip !== 'wlan') {
+    if (f.wlan === 'si' && !p.specs.wlan) return false;
+    if (f.wlan === 'no' && p.specs.wlan) return false;
+  }
+  if (skip !== 'hdmi') {
+    if (f.hdmi === 'si' && !p.specs.hdmi) return false;
+    if (f.hdmi === 'no' && p.specs.hdmi) return false;
+  }
+  if (skip !== 'vga') {
+    if (f.vga === 'si' && !p.specs.vga) return false;
+    if (f.vga === 'no' && p.specs.vga) return false;
+  }
+  if (skip !== 'optica') {
+    if (f.optica === 'si' && !p.specs.unidadOptica) return false;
+    if (f.optica === 'no' && p.specs.unidadOptica) return false;
+  }
+
+  if (ctx.searchText) {
+    const searchStr = `${p.nroParte} ${p.modelo} ${p.marca} ${p.specs.procesador} ${p.categoria} ${p.specs.ram} ${p.specs.almacenamiento}`.toLowerCase();
+    if (!searchStr.includes(ctx.searchText)) return false;
+  }
+
+  return true;
+}
+
+function applyFilters() {
+  const ctx = getFilterContext();
 
   // Mostrar indicador de carga
   showLoading(true);
 
   // Usar setTimeout para no bloquear la UI
   setTimeout(() => {
-    filteredProducts = [];
-
-    for (let i = 0; i < allProducts.length; i++) {
-      const p = allProducts[i];
-      if (!p.specs) continue;
-
-      // Filtros principales (cortocircuito rápido)
-      if (categoria && p.categoria !== categoria) continue;
-      if (procesador && p.specs.procesador !== procesador) continue;
-      if (ram && p.specs.ram !== ram) continue;
-      if (almacenamiento && p.specs.almacenamiento !== almacenamiento) continue;
-      if (so && p.specs.sistemaOperativo !== so) continue;
-      if (software && p.specs.software !== software) continue;
-      if (p.precio < precioMin || p.precio > precioMax) continue;
-
-      // Filtros avanzados
-      if (lan === 'si' && !p.specs.lan) continue;
-      if (lan === 'no' && p.specs.lan) continue;
-      if (wlan === 'si' && !p.specs.wlan) continue;
-      if (wlan === 'no' && p.specs.wlan) continue;
-      if (hdmi === 'si' && !p.specs.hdmi) continue;
-      if (hdmi === 'no' && p.specs.hdmi) continue;
-      if (vga === 'si' && !p.specs.vga) continue;
-      if (vga === 'no' && p.specs.vga) continue;
-      if (optica === 'si' && !p.specs.unidadOptica) continue;
-      if (optica === 'no' && p.specs.unidadOptica) continue;
-
-      // Búsqueda de texto
-      if (searchText) {
-        const searchStr = `${p.nroParte} ${p.modelo} ${p.marca} ${p.specs.procesador} ${p.categoria} ${p.specs.ram} ${p.specs.almacenamiento}`.toLowerCase();
-        if (!searchStr.includes(searchText)) continue;
-      }
-
-      filteredProducts.push(p);
-    }
+    filteredProducts = allProducts.filter(p => productMatchesFilters(p, ctx, null));
 
     applySort();
     resetPagination();
     renderProducts(true);
+    renderActiveFilterChips();
+    refreshFilterCounts(ctx);
     showLoading(false);
   }, 50);
+}
+
+// Filtros dinámicos: recalcula cuántos productos quedarían por cada opción
+// de cada filtro, considerando el resto de filtros activos (pero no el suyo
+// propio), para que las listas se actualicen según lo ya seleccionado.
+function computeFacetCounts(mf, ctx) {
+  const counts = new Map();
+  for (let i = 0; i < allProducts.length; i++) {
+    const p = allProducts[i];
+    if (!productMatchesFilters(p, ctx, mf.key)) continue;
+    const val = mf.field === null ? p.categoria : (p.specs ? p.specs[mf.field] : undefined);
+    if (!val || val === 'NO') continue;
+    counts.set(val, (counts.get(val) || 0) + 1);
+  }
+  return counts;
+}
+
+function refreshFilterCounts(ctx) {
+  ctx = ctx || getFilterContext();
+  MULTI_FILTER_KEYS.forEach(mf => {
+    const panel = document.getElementById('panel-' + mf.key);
+    if (!panel) return;
+    const list = panel.querySelector('.filter-panel-list');
+    if (!list) return;
+    const counts = computeFacetCounts(mf, ctx);
+
+    // Actualiza conteo/estado y separa en dos grupos, conservando el orden
+    // (numérico/alfabético) ya establecido dentro de cada grupo.
+    const available = [];
+    const unavailable = [];
+
+    list.querySelectorAll('.filter-checkbox-item').forEach(item => {
+      const input = item.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      const n = counts.get(input.value) || 0;
+      const countEl = item.querySelector('.filter-option-count');
+      if (countEl) countEl.textContent = `(${n})`;
+
+      const disable = n === 0 && !input.checked;
+      input.disabled = disable;
+      item.classList.toggle('disabled', disable);
+
+      (disable ? unavailable : available).push(item);
+    });
+
+    // Reordenar en el DOM: opciones disponibles primero (arriba, sin scroll),
+    // las agotadas por la combinación de filtros al final.
+    available.forEach(item => list.appendChild(item));
+    unavailable.forEach(item => list.appendChild(item));
+  });
+}
+
+// ============================================
+// ESTADO DE FILTROS (multi-selección + limpiar)
+// ============================================
+function toggleFilterValue(key, value, checked) {
+  if (checked) activeFilters[key].add(value);
+  else activeFilters[key].delete(value);
+  updateFilterButtonBadge(key);
+  applyFilters();
+}
+
+function removeFilterValue(key, value) {
+  activeFilters[key].delete(value);
+  document.querySelectorAll(`#panel-${key} input[type="checkbox"]`).forEach(cb => {
+    if (cb.value === value) cb.checked = false;
+  });
+  updateFilterButtonBadge(key);
+  applyFilters();
+}
+
+function clearFilterCategory(key) {
+  activeFilters[key].clear();
+  document.querySelectorAll(`#panel-${key} input[type="checkbox"]`).forEach(cb => { cb.checked = false; });
+  updateFilterButtonBadge(key);
+  applyFilters();
+}
+
+function setBoolFilter(key, value) {
+  activeFilters[key] = value;
+  syncPillUI(key);
+  applyFilters();
+}
+
+function clearBoolFilter(key) {
+  activeFilters[key] = '';
+  syncPillUI(key);
+  applyFilters();
+}
+
+function clearAllFilters() {
+  MULTI_FILTER_KEYS.forEach(f => {
+    activeFilters[f.key].clear();
+    document.querySelectorAll(`#panel-${f.key} input[type="checkbox"]`).forEach(cb => { cb.checked = false; });
+    updateFilterButtonBadge(f.key);
+  });
+  BOOL_FILTER_KEYS.forEach(key => {
+    activeFilters[key] = '';
+    syncPillUI(key);
+  });
+
+  const searchEl = document.getElementById('search-input');
+  const minEl = document.getElementById('price-min');
+  const maxEl = document.getElementById('price-max');
+  if (searchEl) searchEl.value = '';
+  if (minEl) minEl.value = '';
+  if (maxEl) maxEl.value = '';
+
+  applyFilters();
 }
 
 function applySort() {

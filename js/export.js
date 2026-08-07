@@ -31,6 +31,18 @@ function shareWhatsApp() {
       text += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
     }
 
+    if (p.specs.case) {
+      text += `• Gabinete: ${p.specs.case}\n`;
+    }
+
+    if (p.specs.fuente) {
+      text += `• Fuente de poder: ${p.specs.fuente}\n`;
+    }
+
+    if (p.specs.chipset) {
+      text += `• Chipset: ${p.specs.chipset}\n`;
+    }
+
     text += `• Garantía: ${p.specs.garantia}\n`;
     text += `Precio: *$${p.precio.toLocaleString('en-US')} USD*\n\n`;
   });
@@ -81,6 +93,18 @@ async function copySummary() {
 
     if (p.specs.tarjetaVideo && p.specs.tarjetaVideo !== 'Gráficos Integrados' && p.specs.tarjetaVideo !== 'INTEGRADO') {
       text += `   GPU: ${p.specs.tarjetaVideo}\n`;
+    }
+
+    if (p.specs.case) {
+      text += `   Gabinete: ${p.specs.case}\n`;
+    }
+
+    if (p.specs.fuente) {
+      text += `   Fuente de poder: ${p.specs.fuente}\n`;
+    }
+
+    if (p.specs.chipset) {
+      text += `   Chipset: ${p.specs.chipset}\n`;
     }
 
     text += `   Garantia: ${p.specs.garantia}\n`;

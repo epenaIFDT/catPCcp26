@@ -26,48 +26,94 @@
   <div class="filters-bar">
     <div class="filters-content">
       <div class="filters-row">
-        <select id="filter-categoria" class="filter-select"></select>
-        <select id="filter-procesador" class="filter-select"></select>
-        <select id="filter-ram" class="filter-select"></select>
-        <select id="filter-almacenamiento" class="filter-select"></select>
-        <select id="filter-so" class="filter-select"></select>
-        <select id="filter-software" class="filter-select"></select>
+        <div class="filter-dropdown" data-filter="categoria">
+          <button type="button" class="filter-dropdown-btn" id="btn-categoria">Categoría <span class="filter-count" id="count-categoria"></span></button>
+          <div class="filter-dropdown-panel" id="panel-categoria"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="procesador">
+          <button type="button" class="filter-dropdown-btn" id="btn-procesador">Procesador <span class="filter-count" id="count-procesador"></span></button>
+          <div class="filter-dropdown-panel" id="panel-procesador"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="ram">
+          <button type="button" class="filter-dropdown-btn" id="btn-ram">RAM <span class="filter-count" id="count-ram"></span></button>
+          <div class="filter-dropdown-panel" id="panel-ram"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="almacenamiento">
+          <button type="button" class="filter-dropdown-btn" id="btn-almacenamiento">Almacenamiento <span class="filter-count" id="count-almacenamiento"></span></button>
+          <div class="filter-dropdown-panel" id="panel-almacenamiento"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="so">
+          <button type="button" class="filter-dropdown-btn" id="btn-so">Sistema Op. <span class="filter-count" id="count-so"></span></button>
+          <div class="filter-dropdown-panel" id="panel-so"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="software">
+          <button type="button" class="filter-dropdown-btn" id="btn-software">Software <span class="filter-count" id="count-software"></span></button>
+          <div class="filter-dropdown-panel" id="panel-software"></div>
+        </div>
+
         <div class="price-range">
           <input type="number" id="price-min" placeholder="Min $">
           <span>-</span>
           <input type="number" id="price-max" placeholder="Max $">
         </div>
+
         <button id="filters-toggle" class="filters-toggle">⚙️ Más filtros</button>
+        <button id="btn-clear-filters" class="btn-clear-filters" style="display:none;">🧹 Limpiar filtros</button>
       </div>
 
       <!-- ADVANCED FILTERS (hidden) -->
       <div id="filters-advanced" class="filters-advanced">
-        <select id="filter-lan" class="filter-select">
-          <option value="">LAN (todos)</option>
-          <option value="si">Con LAN</option>
-          <option value="no">Sin LAN</option>
-        </select>
-        <select id="filter-wlan" class="filter-select">
-          <option value="">WLAN (todos)</option>
-          <option value="si">Con WLAN</option>
-          <option value="no">Sin WLAN</option>
-        </select>
-        <select id="filter-hdmi" class="filter-select">
-          <option value="">HDMI (todos)</option>
-          <option value="si">Con HDMI</option>
-          <option value="no">Sin HDMI</option>
-        </select>
-        <select id="filter-vga" class="filter-select">
-          <option value="">VGA (todos)</option>
-          <option value="si">Con VGA</option>
-          <option value="no">Sin VGA</option>
-        </select>
-        <select id="filter-optica" class="filter-select">
-          <option value="">U. Óptica (todos)</option>
-          <option value="si">Con U. Óptica</option>
-          <option value="no">Sin U. Óptica</option>
-        </select>
+        <div class="filter-dropdown" data-filter="case">
+          <button type="button" class="filter-dropdown-btn" id="btn-case">Gabinete <span class="filter-count" id="count-case"></span></button>
+          <div class="filter-dropdown-panel" id="panel-case"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="fuente">
+          <button type="button" class="filter-dropdown-btn" id="btn-fuente">Fuente de Poder <span class="filter-count" id="count-fuente"></span></button>
+          <div class="filter-dropdown-panel" id="panel-fuente"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="video">
+          <button type="button" class="filter-dropdown-btn" id="btn-video">Tarjeta de Video <span class="filter-count" id="count-video"></span></button>
+          <div class="filter-dropdown-panel" id="panel-video"></div>
+        </div>
+        <div class="filter-dropdown" data-filter="chipset">
+          <button type="button" class="filter-dropdown-btn" id="btn-chipset">Chipset <span class="filter-count" id="count-chipset"></span></button>
+          <div class="filter-dropdown-panel" id="panel-chipset"></div>
+        </div>
+
+        <div class="pill-filter" data-filter="lan">
+          <span class="pill-filter-label">LAN</span>
+          <button type="button" class="pill-btn active" data-value="">Todos</button>
+          <button type="button" class="pill-btn" data-value="si">Con</button>
+          <button type="button" class="pill-btn" data-value="no">Sin</button>
+        </div>
+        <div class="pill-filter" data-filter="wlan">
+          <span class="pill-filter-label">WLAN</span>
+          <button type="button" class="pill-btn active" data-value="">Todos</button>
+          <button type="button" class="pill-btn" data-value="si">Con</button>
+          <button type="button" class="pill-btn" data-value="no">Sin</button>
+        </div>
+        <div class="pill-filter" data-filter="hdmi">
+          <span class="pill-filter-label">HDMI</span>
+          <button type="button" class="pill-btn active" data-value="">Todos</button>
+          <button type="button" class="pill-btn" data-value="si">Con</button>
+          <button type="button" class="pill-btn" data-value="no">Sin</button>
+        </div>
+        <div class="pill-filter" data-filter="vga">
+          <span class="pill-filter-label">VGA</span>
+          <button type="button" class="pill-btn active" data-value="">Todos</button>
+          <button type="button" class="pill-btn" data-value="si">Con</button>
+          <button type="button" class="pill-btn" data-value="no">Sin</button>
+        </div>
+        <div class="pill-filter" data-filter="optica">
+          <span class="pill-filter-label">U. Óptica</span>
+          <button type="button" class="pill-btn active" data-value="">Todos</button>
+          <button type="button" class="pill-btn" data-value="si">Con</button>
+          <button type="button" class="pill-btn" data-value="no">Sin</button>
+        </div>
       </div>
+
+      <!-- CHIPS DE FILTROS ACTIVOS -->
+      <div id="active-filters-bar" class="active-filters-bar" style="display:none;"></div>
     </div>
   </div>
 
