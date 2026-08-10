@@ -40,6 +40,13 @@ function formatKey(key) {
   return key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
 }
 
+// Devuelve la versión simplificada de un campo si el glosario (admin-local)
+// definió una para este producto, o el valor real si no hay ninguna. Solo
+// para el resumen de la card — "Ver detalle" siempre usa p.specs tal cual.
+function getResumenValue(p, field) {
+  return (p.specsResumen && p.specsResumen[field] !== undefined) ? p.specsResumen[field] : p.specs[field];
+}
+
 // Generar HTML de una card (función pura, rápida)
 function generateCardHTML(p) {
   const isSelected = selectedProducts.has(p.id);
@@ -51,15 +58,38 @@ function generateCardHTML(p) {
     specsHTML = `<div class="card-description">${getDescriptionSummary(p, 160)}</div>`;
   } else {
     // Solo se listan specs con dato real; nada de "N/A" ocupando espacio.
+    // Si el glosario simplificó un campo, se usa esa versión tal cual (sin
+    // reformatear encima); si no, se aplica el formateo automático normal.
     const items = [];
-    if (p.specs.procesador) items.push({ label: 'CPU', value: shortText(p.specs.procesador, 25) });
-    if (p.specs.ram) items.push({ label: 'RAM', value: shortText(p.specs.ram, 20) });
-    if (p.specs.almacenamiento) items.push({ label: 'Disco', value: shortText(p.specs.almacenamiento, 20) });
-    if (p.specs.sistemaOperativo) items.push({ label: 'SO', value: getOSShort(p.specs.sistemaOperativo) });
-    if (p.specs.pantalla) items.push({ label: 'Pantalla', value: formatScreen(p.specs.pantalla) });
-    if (isDedicatedVideo(p.specs.tarjetaVideo)) items.push({ label: 'GPU', value: shortText(p.specs.tarjetaVideo, 25) });
-    if (p.specs.case) items.push({ label: 'Gabinete', value: shortText(p.specs.case, 20) });
-    if (p.specs.fuente) items.push({ label: 'Fuente', value: shortText(p.specs.fuente, 25) });
+    const resumenCpu = getResumenValue(p, 'procesador');
+    if (resumenCpu) items.push({ label: 'CPU', value: shortText(resumenCpu, 25) });
+
+    const resumenRam = getResumenValue(p, 'ram');
+    if (resumenRam) items.push({ label: 'RAM', value: shortText(resumenRam, 20) });
+
+    const resumenDisco = getResumenValue(p, 'almacenamiento');
+    if (resumenDisco) items.push({ label: 'Disco', value: shortText(resumenDisco, 20) });
+
+    if (p.specs.sistemaOperativo) {
+      const soSimplificado = p.specsResumen && p.specsResumen.sistemaOperativo;
+      items.push({ label: 'SO', value: soSimplificado ? shortText(soSimplificado, 20) : getOSShort(p.specs.sistemaOperativo) });
+    }
+
+    if (p.specs.pantalla) {
+      const pantallaSimplificada = p.specsResumen && p.specsResumen.pantalla;
+      items.push({ label: 'Pantalla', value: pantallaSimplificada ? shortText(pantallaSimplificada, 25) : formatScreen(p.specs.pantalla) });
+    }
+
+    if (isDedicatedVideo(p.specs.tarjetaVideo)) {
+      const videoSimplificado = p.specsResumen && p.specsResumen.tarjetaVideo;
+      items.push({ label: 'GPU', value: shortText(videoSimplificado || p.specs.tarjetaVideo, 25) });
+    }
+
+    const resumenGabinete = getResumenValue(p, 'case');
+    if (resumenGabinete) items.push({ label: 'Gabinete', value: shortText(resumenGabinete, 20) });
+
+    const resumenFuente = getResumenValue(p, 'fuente');
+    if (resumenFuente) items.push({ label: 'Fuente', value: shortText(resumenFuente, 25) });
 
     specsHTML = items.length
       ? `<div class="card-specs">${items.map(it => `
@@ -91,7 +121,7 @@ function generateCardHTML(p) {
           <span class="card-price">$${p.precio.toLocaleString()}</span>
         </div>
         <div class="card-actions">
-          <button onclick="viewDetail('${p.id}')" title="Ver detalle">👁️</button>
+          <button onclick="viewDetail('${p.id}')" title="Ver detalle">ℹ️</button>
           ${p.fichaUrl ? `<button onclick="window.open('${p.fichaUrl}','_blank')" title="Ficha técnica">📄</button>` : ''}
         </div>
       </div>

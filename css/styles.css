@@ -669,8 +669,8 @@ body {
 }
 
 .card-price {
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--success);
 }
 
