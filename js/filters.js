@@ -94,7 +94,13 @@ function getUniqueValues(field) {
     if (field === 'categoria') {
       if (p.categoria) values.add(p.categoria);
     } else if (p.specs) {
-      const val = p.specs[field];
+      // Si el Glosario de Simplificaciones (admin-local) definió una versión
+      // corta para este campo, la opción del filtro se arma con ESA versión
+      // en vez del valor crudo del Excel (getResumenValue cae de vuelta al
+      // valor real si no hay ninguna regla) — así el filtro agrupa variantes
+      // técnicas equivalentes bajo una sola opción legible, igual que ya
+      // hace el resumen de la card.
+      const val = getResumenValue(p, field);
       if (val && val !== 'NO' && val !== 'SI' && val !== true && val !== false) {
         values.add(val);
       }
@@ -157,7 +163,10 @@ function productMatchesFilters(p, ctx, skip) {
     if (mf.key === skip) continue;
     const set = f[mf.key];
     if (!set.size) continue;
-    const val = mf.field === null ? p.categoria : p.specs[mf.field];
+    // Las opciones seleccionadas vienen de getUniqueValues(), que ya usa el
+    // valor simplificado — hay que comparar contra ESE mismo valor, no el
+    // crudo, o un producto con regla de glosario nunca haría match.
+    const val = mf.field === null ? p.categoria : getResumenValue(p, mf.field);
     if (!set.has(val)) return false;
   }
 
@@ -220,7 +229,7 @@ function computeFacetCounts(mf, ctx) {
   for (let i = 0; i < allProducts.length; i++) {
     const p = allProducts[i];
     if (!productMatchesFilters(p, ctx, mf.key)) continue;
-    const val = mf.field === null ? p.categoria : (p.specs ? p.specs[mf.field] : undefined);
+    const val = mf.field === null ? p.categoria : (p.specs ? getResumenValue(p, mf.field) : undefined);
     if (!val || val === 'NO') continue;
     counts.set(val, (counts.get(val) || 0) + 1);
   }

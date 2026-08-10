@@ -68,7 +68,7 @@ function generateCardHTML(p) {
     if (resumenRam) items.push({ label: 'RAM', value: shortText(resumenRam, 20) });
 
     const resumenDisco = getResumenValue(p, 'almacenamiento');
-    if (resumenDisco) items.push({ label: 'Disco', value: shortText(resumenDisco, 20) });
+    if (resumenDisco) items.push({ label: 'Alm.', value: shortText(resumenDisco, 20) });
 
     if (p.specs.sistemaOperativo) {
       const soSimplificado = p.specsResumen && p.specsResumen.sistemaOperativo;
