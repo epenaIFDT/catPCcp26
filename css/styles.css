@@ -629,7 +629,7 @@ body {
 }
 
 .spec-item {
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   display: flex;
   align-items: baseline;
   gap: 5px;
@@ -887,7 +887,7 @@ body {
   }
 
   .spec-item {
-    font-size: 0.88rem;
+    font-size: 0.8rem;
   }
 
   .card-qty {

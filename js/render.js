@@ -77,7 +77,7 @@ function generateCardHTML(p) {
 
     if (p.specs.pantalla) {
       const pantallaSimplificada = p.specsResumen && p.specsResumen.pantalla;
-      items.push({ label: 'Pantalla', value: pantallaSimplificada ? shortText(pantallaSimplificada, 25) : formatScreen(p.specs.pantalla) });
+      items.push({ label: 'Pant.', value: pantallaSimplificada ? shortText(pantallaSimplificada, 25) : formatScreen(p.specs.pantalla) });
     }
 
     if (isDedicatedVideo(p.specs.tarjetaVideo)) {
@@ -86,10 +86,10 @@ function generateCardHTML(p) {
     }
 
     const resumenGabinete = getResumenValue(p, 'case');
-    if (resumenGabinete) items.push({ label: 'Gabinete', value: shortText(resumenGabinete, 20) });
+    if (resumenGabinete) items.push({ label: 'Gab.', value: shortText(resumenGabinete, 20) });
 
     const resumenFuente = getResumenValue(p, 'fuente');
-    if (resumenFuente) items.push({ label: 'Fuente', value: shortText(resumenFuente, 25) });
+    if (resumenFuente) items.push({ label: 'Fte.', value: shortText(resumenFuente, 25) });
 
     specsHTML = items.length
       ? `<div class="card-specs">${items.map(it => `

@@ -65,7 +65,19 @@ async function loadProducts() {
 
   const res = await fetch('data/productos.enc.json');
   const pkg = await res.json();
-  const data = await decryptJSON(pkg.iv, pkg.data, dataKey);
+
+  let data;
+  try {
+    data = await decryptJSON(pkg.iv, pkg.data, dataKey);
+  } catch (e) {
+    // La clave guardada en la sesión ya no coincide con el catálogo
+    // publicado (por ejemplo, se volvió a publicar con datos nuevos
+    // mientras esta sesión seguía activa). Se limpia la sesión vieja y se
+    // manda a pedir el código de nuevo, en vez de romper la página entera.
+    console.warn('La sesión guardada no pudo desencriptar el catálogo actual. Se pide iniciar sesión de nuevo.', e);
+    logout();
+    return [];
+  }
 
   allProducts = data;
   filteredProducts = [...data];
