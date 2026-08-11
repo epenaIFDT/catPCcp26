@@ -1,79 +1,72 @@
 {
   "f82e88b2c88f8f7b0db9f9ec1f53190c9ad49bc85fedb3313ceb395f2206d4d4": {
-    "salt": "CMz3V26mRF8l/tCuBIKktQ==",
-    "iv": "f9Mhaf2jnmP8/8cj",
-    "wrappedKey": "yCFfvbMYTcNu+3BbE83WCc7dTS7qoXMiArGfXRkEm7RTxbLrFsJLxnOa6Z2ZzqCd",
+    "salt": "mefyNUMOOHRGJIxPh1MCiw==",
+    "iv": "KvafmnybU2mQkvcC",
+    "wrappedKey": "j9FLFs/OJZ9iwJKbpyEciiC1V/ZekqCn1PkVE5ZROiDOaRIoyuiuRb4fK+Tazclx",
     "nombre": "Administrador",
     "rol": "admin"
   },
   "3c5181ac688c29ecd89a07fb4c098d0a5b135e3d554fa2d95a7c3a5b684ee661": {
-    "salt": "J/giJyT7W7RhYj/PIV1bXg==",
-    "iv": "xOVlti+O0StYiyoe",
-    "wrappedKey": "H8DpjIsE1NvQOTkBbUGru4gqLuGDhvu/+NmH8mnU5mzz8aeV/iKVVRGci2wJcxh0",
+    "salt": "TiAi23sQZUlW/GM7afzSjQ==",
+    "iv": "3Dfw0Ru3kvQT3wUT",
+    "wrappedKey": "lZk+r+neKoGjj3zDYMFxIWip3oPhbIH72zm0b38t9qjEXufbBm9HTy8tRaC/pEhI",
     "nombre": "Ventas 1",
     "rol": "user"
   },
   "cb833ecc4166c4510dbd89feddfaae69ab07ae2e2522e36e1b3f7dfcad17f523": {
-    "salt": "J2PQ390RTit1CB9JdTVV2A==",
-    "iv": "H4oFoZQJmQVKCsRK",
-    "wrappedKey": "6/5s0P90xfN4Rr1i84QIz5GrDPez30pZ3d6pDHj+cvToN3IQaoIVEw2c5jgS0bfC",
+    "salt": "H1ETfIqHA7qC51K+gELybA==",
+    "iv": "bvDabONf9himcDn9",
+    "wrappedKey": "F1CmPrcxNHwnJQ66zXZNh6xLedOnSOSPap9uoDdeO9PA8PkG/7DbJDpD9S8NnKVH",
     "nombre": "Ventas 2",
     "rol": "user"
   },
   "31b7d62014330783c72f4a7c35f8d8079bdbfaabbb8a3bc20629a98afae8d0bd": {
-    "salt": "H2KIjRw4EHAPQEdLuGfu6w==",
-    "iv": "EKg4HRqlREj0u6fF",
-    "wrappedKey": "j0SmlFNHSbc5jLDDnMNehTCsAOYMXajn0eaDs+1XgkBAQ6QtOtTQZbYl9FyedPJT",
+    "salt": "8fB38s1lBRa/dVPhXaM3vw==",
+    "iv": "GN96GNSqBsafUMtN",
+    "wrappedKey": "WP1Gy8XtZL50ViKvKdjs3E5wUjJcELC5IZnqMIrqie4H4bJ5qGyQPOhtny1DULFw",
     "nombre": "Ventas 3",
     "rol": "user"
   },
   "aa1eec363ad842fbe6780559c2402800ffcb267cf0ecb204dd3318378f19f853": {
-    "salt": "d2OSJMWwVN2Lxcp7S9keww==",
-    "iv": "OuWACoGoqxxt0aWb",
-    "wrappedKey": "eVOy0WUBrRP/w6qAGdA4EAzH7Dxnd4sHwoHq5tKi0GikkYUC+nka5LGluN3RkwGH",
+    "salt": "pX49Tw9MrJrYLxWRoQdTbQ==",
+    "iv": "+ZQPLfqPGmFth9Fs",
+    "wrappedKey": "bwLoXCsHjtKMCMbxWCiwd1wElhkvDuzICEJXNsB5hPENV2/V2oRttFmKa14NQ9Eh",
     "nombre": "Ventas 4",
     "rol": "user"
   },
   "8954d76a09bcfbc8d4d0dd3bbab2bd0552f66027d55e3c573456f176fe8626d4": {
-    "salt": "4ACuUjLdLDGBKyQeglVw3w==",
-    "iv": "r93uIydFqk2At2SP",
-    "wrappedKey": "vt3t01tJoN5PjGS7kR/vWg44dGSOKITF7iy+I39woSdKwM/sGMDHowy0JssRyV3/",
+    "salt": "ZbJ2KPp2UT4Cin8im7KIkA==",
+    "iv": "iMA5s9dt/9PpsVNf",
+    "wrappedKey": "c+Uizp8NOC90RGqCDgTirNTRt9asBBad4Y+lAZPl9Q9fp8JmkrpGeHQ2W+zfCKd/",
     "nombre": "Ventas 5",
     "rol": "user"
   },
   "3084a1602ebcfa0a5b106b1187beb02fb50382fdfba9c637683fe9a93bfa993c": {
-    "salt": "12EADGMmrSan7ou3bpn+Nw==",
-    "iv": "t2Nrg121CkvAXjhF",
-    "wrappedKey": "NpzSAtBh3C4EfaCX0EVmn6UXB0s9aQoyckGfXQSOS+kVP65FA7TY+LAV6pJ1QAf3",
+    "salt": "l9dqhKZAJ15SRfpFCdfWNQ==",
+    "iv": "9UmQyQUiWWrXT5uB",
+    "wrappedKey": "+goy159MmR2ycoMvQIm3ZCu6NVOVRC01sRBMYbTcpmOp4fEAhWCBiC4fDCtLMfPD",
     "nombre": "Admin 1",
     "rol": "admin"
   },
   "b5c9cb76d51919b676a08bccff89e5f05d725e2e4da6297caacda2bdce51a860": {
-    "salt": "h5LJHlZHGRBP8vBfaGVvlQ==",
-    "iv": "0rr/E26hfbve5gBS",
-    "wrappedKey": "7y9nQpQgmZ9g/CS5UTAYXjETQvP4Cpys9EIpfdasLN0tOr+HvAdQ4l9AXS6CeLIK",
+    "salt": "tzJU2sf//AkZOwAqfibIMQ==",
+    "iv": "A/bAiRq57siQ5GSx",
+    "wrappedKey": "qm5q0ScGvS3ptbGE3eYiN2Tz5TtvhQWYzpsRVf+BTo/OpR1q08Oo+gnhIylMSMv2",
     "nombre": "Admin 2",
     "rol": "user"
   },
   "a6bf31596094bbbb8d97dccbe7e7362e4bee31d5d31bb4cee1fb88c8dafffcd1": {
-    "salt": "wxo3JPhGGtWmuVZV4dZrVA==",
-    "iv": "2JQPKrPeY0InsVrC",
-    "wrappedKey": "i+TkVZ6zYYbkKs+ZGThdnNDWVohSA1q0h4IJSKPQS6y8z2D9OobOxFtIYj3FPe7v",
+    "salt": "zQsmdylYRcljbZUR4fPO1A==",
+    "iv": "/q7ANm3k4QvWf7+7",
+    "wrappedKey": "Lbi9VWllfAuoiFNIbOSO8ULayYZz04sRhPYB14afwv1ahFeBKY3iBeJw1WCkgEKS",
     "nombre": "Admin 3",
     "rol": "user"
   },
   "1770cc9c8e6a8a1fa173127ca23f27df53e74160350110f79667261358b97a4d": {
-    "salt": "INdd6/DC36ci4MHnQDmZ8w==",
-    "iv": "xYoCJr490YiyvuOu",
-    "wrappedKey": "dGilCdSWkR0F5gpx1n7mb3+NjWxo4TSg1o9lS48WCDPqJTvbweDe/zn0nELi1id9",
+    "salt": "bBIRi1UpRAHNzHdnvAvTSw==",
+    "iv": "zI+oBnj685oj1hPF",
+    "wrappedKey": "utzNF/wiBROMjHtbKFjBxPGMBUOTXohiS6H4qbROWpos49+AXKUzrMIY87MM4joS",
     "nombre": "Admin 4",
     "rol": "user"
-  },
-  "1a6e4c00d5d28c7072abdfdc191a0f873d8488f2fef7742e0f283187f28d1473": {
-    "salt": "1lxJPusoMF8pLjrid6zUew==",
-    "iv": "QFqwBhnbeBXsAkpG",
-    "wrappedKey": "QSaoWMRz7z63b1CrsEA85LJgPUe2wZ6hJqVwmGflXtEVAXnjmGnUJZLihRkqqkal",
-    "nombre": "Clave Maestra (SOLO PRUEBAS LOCALES)",
-    "rol": "admin"
   }
 }

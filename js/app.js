@@ -9,6 +9,10 @@ async function initApp() {
   const userEl = document.getElementById('user-name');
   if (userEl) userEl.textContent = session.nombre;
 
+  // No se espera (el catálogo sigue cargando en paralelo detrás del
+  // overlay, que tapa toda la interacción si hay una encuesta pendiente).
+  checkEncuestaGate(session);
+
   // Botón de gestión: solo para admins, y solo en local (admin-local/ no existe
   // en el sitio publicado, ya que está excluido del repo con .gitignore).
   const isLocalHost = ['localhost', '127.0.0.1'].includes(location.hostname);
