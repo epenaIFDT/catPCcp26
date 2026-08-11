@@ -374,9 +374,14 @@
         }
         
       } catch (error) {
-        // ⚠️ Error de red u otro
         console.error('Error en login:', error);
-        showError('Error de conexión. Verifica tu conexión a internet.');
+        if (error && error.code === 'USAGE_LIMIT_REACHED') {
+          // Código válido pero ya agotó sus usos en este navegador (ver js/auth.js)
+          showError(error.message);
+        } else {
+          // ⚠️ Error de red u otro
+          showError('Error de conexión. Verifica tu conexión a internet.');
+        }
         setLoading(false);
       }
     }

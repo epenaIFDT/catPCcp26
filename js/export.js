@@ -33,29 +33,35 @@ function isDedicatedVideo(video) {
 // Bloque de specs de un producto para el mensaje de WhatsApp (con viñetas).
 // Evita mostrar "Procesador: N/A" etc. en categorías que no tienen esos
 // datos (monitores, pantallas interactivas) — se usa la descripción en su lugar.
-function buildItemSpecsWhatsApp(p) {
+// incluirFicha: solo true cuando la selección tiene hasta 3 items (ver
+// shareWhatsApp) — con más productos el mensaje ya es largo de por sí, y
+// agregar un enlace por item lo haría superar el límite práctico casi
+// siempre.
+function buildItemSpecsWhatsApp(p, incluirFicha) {
+  let block;
   if (CATEGORIAS_SIN_SPECS.includes(p.categoria)) {
-    return `${getDescriptionSummary(p, 220)}\n`;
+    block = `${getDescriptionSummary(p, 220)}\n`;
+  } else {
+    block = '';
+    block += `• Procesador: ${formatProcessor(p.specs.procesador)}\n`;
+    block += `• RAM: ${formatRAM(p.specs.ram)}\n`;
+    block += `• Almacenamiento: ${formatStorage(p.specs.almacenamiento)}\n`;
+    if (p.specs.pantalla) block += `• Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
+    block += `• Sistema operativo: ${formatOS(p.specs.sistemaOperativo)}\n`;
+    if (p.specs.software && p.specs.software !== 'NO') block += `• Office: ${formatSoftware(p.specs.software)}\n`;
+    if (isDedicatedVideo(p.specs.tarjetaVideo)) {
+      block += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
+    }
+    if (p.specs.case) block += `• Gabinete: ${p.specs.case}\n`;
+    if (p.specs.fuente) block += `• Fuente de poder: ${p.specs.fuente}\n`;
+    if (p.specs.chipset) block += `• Chipset: ${p.specs.chipset}\n`;
+    block += `• Garantía: ${p.specs.garantia}\n`;
   }
-
-  let block = '';
-  block += `• Procesador: ${formatProcessor(p.specs.procesador)}\n`;
-  block += `• RAM: ${formatRAM(p.specs.ram)}\n`;
-  block += `• Almacenamiento: ${formatStorage(p.specs.almacenamiento)}\n`;
-  if (p.specs.pantalla) block += `• Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
-  block += `• Sistema operativo: ${formatOS(p.specs.sistemaOperativo)}\n`;
-  if (p.specs.software && p.specs.software !== 'NO') block += `• Office: ${formatSoftware(p.specs.software)}\n`;
-  if (isDedicatedVideo(p.specs.tarjetaVideo)) {
-    block += `• Tarjeta de video: ${p.specs.tarjetaVideo}\n`;
-  }
-  if (p.specs.case) block += `• Gabinete: ${p.specs.case}\n`;
-  if (p.specs.fuente) block += `• Fuente de poder: ${p.specs.fuente}\n`;
-  if (p.specs.chipset) block += `• Chipset: ${p.specs.chipset}\n`;
-  block += `• Garantía: ${p.specs.garantia}\n`;
+  if (incluirFicha && p.fichaUrl) block += `• Ficha técnica: ${p.fichaUrl}\n`;
   return block;
 }
 
-function buildWhatsAppFullText(products, fecha, ref) {
+function buildWhatsAppFullText(products, fecha, ref, incluirFichas) {
   let text = `Hola, te comparto la cotización VASTEC del ${fecha}:\n\n`;
 
   products.forEach((p, i) => {
@@ -64,7 +70,7 @@ function buildWhatsAppFullText(products, fecha, ref) {
 
     // Título + código en una sola línea (menos líneas, más fácil de escanear)
     text += `*${i + 1}. ${getCardTitle(p)}* (Código: ${p.nroParte})\n`;
-    text += buildItemSpecsWhatsApp(p);
+    text += buildItemSpecsWhatsApp(p, incluirFichas);
     // Siempre precio unitario (c/u) + total del item, sin importar la
     // cantidad, para un formato consistente en toda la selección.
     text += `Cantidad: ${qty}\n`;
@@ -85,7 +91,7 @@ function buildWhatsAppFullText(products, fecha, ref) {
 
   text += `_Precios de lista referenciales, sujetos a disponibilidad._\n`;
   text += `Cotizado por: ${ref}\n`;
-  text += `VASTEC - Soluciones Tecnológicas`;
+  text += `VASTEC`;
 
   return text;
 }
@@ -110,7 +116,7 @@ function buildWhatsAppCompactText(products, fecha, ref) {
   }
 
   text += `\nCotizado por: ${ref}\n`;
-  text += `VASTEC - Soluciones Tecnológicas`;
+  text += `VASTEC`;
 
   return text;
 }
@@ -159,10 +165,26 @@ function shareWhatsApp() {
   // No es un límite oficial exacto, pero por encima de esto conviene reducir.
   const WHATSAPP_SAFE_LIMIT = 3000;
 
-  let text = buildWhatsAppFullText(products, fecha, ref);
+  // Los enlaces a la ficha técnica solo se agregan con selecciones chicas
+  // (hasta 3 items): con más productos, el mensaje ya es largo de por sí y
+  // agregar un enlace por item casi siempre superaría el límite de WhatsApp.
+  const incluirFichas = products.length <= 3;
+  let text = buildWhatsAppFullText(products, fecha, ref, incluirFichas);
   let usedCompact = false;
 
   if (text.length > WHATSAPP_SAFE_LIMIT) {
+    if (incluirFichas) {
+      // A pedido: si con hasta 3 items (+ fichas técnicas) el mensaje no
+      // entra en el límite de WhatsApp, se avisa en vez de mandarlo
+      // recortado o sin los enlaces que se pidieron a propósito.
+      alert(
+        `El mensaje con las fichas técnicas incluidas es demasiado largo para WhatsApp ` +
+        `(${text.length.toLocaleString('es-PE')} caracteres, límite práctico ${WHATSAPP_SAFE_LIMIT.toLocaleString('es-PE')}).\n\n` +
+        `Quita algún producto de la selección, o comparte las fichas técnicas por separado.`
+      );
+      return;
+    }
+
     const compactText = buildWhatsAppCompactText(products, fecha, ref);
     if (compactText.length > WHATSAPP_SAFE_LIMIT) {
       alert(
@@ -228,7 +250,7 @@ async function copySummary() {
     text += '----------------------------------------\n';
   }
   text += 'Precios de lista referenciales. Consultar disponibilidad.\n';
-  text += 'VASTEC - Soluciones Tecnologicas';
+  text += 'VASTEC';
 
   try {
     if (navigator.clipboard && window.isSecureContext) {
