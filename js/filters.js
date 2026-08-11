@@ -30,18 +30,21 @@ let activeFilters = {
 };
 
 // key = id usado en el DOM/activeFilters, field = propiedad en specs
-// (null => usa p.categoria directamente en vez de p.specs.field)
+// (null => usa p.categoria directamente en vez de p.specs.field).
+// searchable = true agrega un buscador dentro del panel (ver
+// renderFilterPanel en app.js) — categoría queda afuera a propósito, tiene
+// pocas opciones y no lo necesita.
 const MULTI_FILTER_KEYS = [
   { key: 'categoria', label: 'Categoría', field: null },
-  { key: 'procesador', label: 'Procesador', field: 'procesador' },
-  { key: 'ram', label: 'RAM', field: 'ram' },
-  { key: 'almacenamiento', label: 'Almacenamiento', field: 'almacenamiento' },
-  { key: 'so', label: 'Sistema Operativo', field: 'sistemaOperativo' },
-  { key: 'software', label: 'Software', field: 'software' },
-  { key: 'case', label: 'Gabinete', field: 'case' },
-  { key: 'fuente', label: 'Fuente de Poder', field: 'fuente' },
-  { key: 'video', label: 'Tarjeta de Video', field: 'tarjetaVideo' },
-  { key: 'chipset', label: 'Chipset', field: 'chipset' }
+  { key: 'procesador', label: 'Procesador', field: 'procesador', searchable: true },
+  { key: 'ram', label: 'RAM', field: 'ram', searchable: true },
+  { key: 'almacenamiento', label: 'Almacenamiento', field: 'almacenamiento', searchable: true },
+  { key: 'so', label: 'Sistema Operativo', field: 'sistemaOperativo', searchable: true },
+  { key: 'software', label: 'Software', field: 'software', searchable: true },
+  { key: 'case', label: 'Gabinete', field: 'case', searchable: true },
+  { key: 'fuente', label: 'Fuente de Poder', field: 'fuente', searchable: true },
+  { key: 'video', label: 'Tarjeta de Video', field: 'tarjetaVideo', searchable: true },
+  { key: 'chipset', label: 'Chipset', field: 'chipset', searchable: true }
 ];
 
 const BOOL_FILTER_KEYS = ['lan', 'wlan', 'hdmi', 'vga', 'optica'];
@@ -245,6 +248,45 @@ function computeFacetCounts(mf, ctx) {
   return counts;
 }
 
+// Quita tildes/diacríticos para que buscar "video" encuentre "Vídeo" y
+// "grafico" encuentre "Gráfico" sin que el usuario tenga que escribir el
+// acento exacto.
+function normalizeForSearch(str) {
+  return (str || '').toString().normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+}
+
+// Buscador DENTRO de un panel de filtro (procesador/RAM/almacenamiento/SO/
+// software/gabinete/fuente/video/chipset — ver MULTI_FILTER_KEYS.searchable).
+// Es la forma más estable de buscar acá: en vez de reconstruir la lista de
+// checkboxes en cada tecla (que obligaría a devolver el foco al input a
+// mano, como hace admin-local/js/glossary.js con sus buscadores), el
+// checkbox/label ya renderizado simplemente se oculta o se muestra —
+// nunca se destruye el <input> de búsqueda, así el foco y la posición del
+// cursor nunca se pierden y no hace falta ningún "refocus" manual.
+// item.title tiene el valor COMPLETO sin truncar (ver renderFilterPanel),
+// así que la búsqueda encuentra coincidencias aunque el texto visible esté
+// cortado con "...".
+function filterPanelOptions(key) {
+  const panel = document.getElementById('panel-' + key);
+  if (!panel) return;
+  const searchInput = document.getElementById('filter-search-' + key);
+  const list = panel.querySelector('.filter-panel-list');
+  const emptyMsg = panel.querySelector('.filter-search-empty');
+  if (!searchInput || !list) return;
+
+  const term = normalizeForSearch(searchInput.value);
+  let visibleCount = 0;
+
+  list.querySelectorAll('.filter-checkbox-item').forEach(item => {
+    const matches = !term || normalizeForSearch(item.title).includes(term);
+    item.style.display = matches ? '' : 'none';
+    if (matches) visibleCount++;
+  });
+
+  list.style.display = visibleCount === 0 ? 'none' : '';
+  if (emptyMsg) emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
 function refreshFilterCounts(ctx) {
   ctx = ctx || getFilterContext();
   MULTI_FILTER_KEYS.forEach(mf => {
@@ -302,6 +344,11 @@ function removeFilterValue(key, value) {
 function clearFilterCategory(key) {
   activeFilters[key].clear();
   document.querySelectorAll(`#panel-${key} input[type="checkbox"]`).forEach(cb => { cb.checked = false; });
+  const searchInput = document.getElementById('filter-search-' + key);
+  if (searchInput) {
+    searchInput.value = '';
+    filterPanelOptions(key);
+  }
   updateFilterButtonBadge(key);
   applyFilters();
 }
@@ -322,6 +369,11 @@ function clearAllFilters() {
   MULTI_FILTER_KEYS.forEach(f => {
     activeFilters[f.key].clear();
     document.querySelectorAll(`#panel-${f.key} input[type="checkbox"]`).forEach(cb => { cb.checked = false; });
+    const searchInput = document.getElementById('filter-search-' + f.key);
+    if (searchInput) {
+      searchInput.value = '';
+      filterPanelOptions(f.key);
+    }
     updateFilterButtonBadge(f.key);
   });
   BOOL_FILTER_KEYS.forEach(key => {

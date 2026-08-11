@@ -311,6 +311,33 @@ body {
   padding: 2px 6px;
 }
 
+.filter-search-wrap {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-search-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.filter-search-input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+  border-color: var(--primary);
+}
+
+.filter-search-empty {
+  padding: 14px 10px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  text-align: center;
+}
+
 .filter-panel-list {
   max-height: 260px;
   overflow-y: auto;

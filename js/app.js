@@ -78,6 +78,39 @@ function renderFilterPanel(key, label, options) {
     return;
   }
 
+  // Buscador dentro del panel (procesador/RAM/almacenamiento/SO/software/
+  // gabinete/fuente/video/chipset — ver MULTI_FILTER_KEYS.searchable).
+  // Categoría no lo necesita, tiene pocas opciones.
+  const isSearchable = MULTI_FILTER_KEYS.find(mf => mf.key === key)?.searchable;
+  if (isSearchable) {
+    const searchWrap = document.createElement('div');
+    searchWrap.className = 'filter-search-wrap';
+    const searchInput = document.createElement('input');
+    searchInput.type = 'search';
+    searchInput.id = 'filter-search-' + key;
+    searchInput.className = 'filter-search-input';
+    searchInput.placeholder = `Buscar en ${label}...`;
+    searchInput.setAttribute('aria-label', `Buscar en ${label}`);
+    searchInput.addEventListener('input', () => filterPanelOptions(key));
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && searchInput.value) {
+        e.stopPropagation();
+        searchInput.value = '';
+        filterPanelOptions(key);
+      }
+    });
+    searchWrap.appendChild(searchInput);
+    panel.appendChild(searchWrap);
+  }
+
+  const emptyMsg = document.createElement('p');
+  emptyMsg.className = 'filter-search-empty';
+  emptyMsg.style.display = 'none';
+  emptyMsg.setAttribute('role', 'status');
+  emptyMsg.setAttribute('aria-live', 'polite');
+  emptyMsg.textContent = 'Ningún valor coincide con la búsqueda.';
+  panel.appendChild(emptyMsg);
+
   const list = document.createElement('div');
   list.className = 'filter-panel-list';
 
