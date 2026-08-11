@@ -21,7 +21,12 @@ async function initApp() {
     adminLink.style.display = 'inline-flex';
   }
 
-  await loadProducts();
+  try {
+    await loadProducts();
+  } catch (e) {
+    showLoadError(e.message);
+    return;
+  }
   populateFilters();
   refreshFilterCounts();
 
@@ -326,5 +331,24 @@ function debounce(fn, delay) {
     clearTimeout(timer);
     timer = setTimeout(() => fn.apply(this, args), delay);
   };
+}
+
+// loadProducts() lanza si el fetch/lectura del catálogo falla (red caída,
+// 404, respuesta no-JSON) — sin esto la página quedaba en blanco con una
+// excepción sin capturar en la consola, sin ningún mensaje para el cliente.
+function showLoadError(message) {
+  showLoading(false);
+  const container = document.getElementById('products-grid');
+  if (container) {
+    container.innerHTML = `
+      <div class="empty-state" style="grid-column: 1/-1;">
+        <div class="icon">⚠️</div>
+        <h3>No se pudo cargar el catálogo</h3>
+        <p>${message || 'Ocurrió un problema al cargar los productos.'}</p>
+        <button class="btn btn-outline btn-sm" onclick="location.reload()">🔄 Reintentar</button>
+      </div>`;
+  }
+  const countEl = document.getElementById('results-count');
+  if (countEl) countEl.textContent = '';
 }
 

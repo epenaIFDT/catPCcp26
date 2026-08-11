@@ -63,8 +63,17 @@ async function loadProducts() {
     return [];
   }
 
-  const res = await fetch('data/productos.enc.json');
-  const pkg = await res.json();
+  let pkg;
+  try {
+    const res = await fetch('data/productos.enc.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    pkg = await res.json();
+  } catch (e) {
+    console.error('No se pudo descargar/leer el catálogo (data/productos.enc.json).', e);
+    allProducts = [];
+    filteredProducts = [];
+    throw new Error('No se pudo cargar el catálogo. Verifica tu conexión e intenta de nuevo.');
+  }
 
   let data;
   try {
