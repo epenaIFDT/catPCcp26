@@ -23,6 +23,21 @@ function getCategoryShort(cat) {
   return map[cat] || cat;
 }
 
+// Una clase de color por categoría (ver .card-category-* en css/styles.css)
+// — una categoría nueva que no esté en el mapa se queda con el azul base
+// de .card-category, no rompe nada.
+function getCategoryColorClass(cat) {
+  const map = {
+    'COMPUTADORA DE ESCRITORIO': 'card-category-desktop',
+    'ESTACIÓN DE TRABAJO': 'card-category-workstation',
+    'ESTACIÓN DE TRABAJO PORTÁTIL': 'card-category-portatil',
+    'COMPUTADORA TODO EN UNO': 'card-category-aio',
+    'MONITOR': 'card-category-monitor',
+    'PANTALLA INTERACTIVA': 'card-category-pantalla'
+  };
+  return map[cat] || '';
+}
+
 function getOSShort(os) {
   if (!os) return 'N/A';
   if (os.includes('WINDOWS 11')) return 'Win 11 Pro';
@@ -103,7 +118,7 @@ function generateCardHTML(p) {
   return `
     <div class="product-card ${isSelected ? 'selected' : ''}" data-id="${p.id}">
       <div class="card-header">
-        <span class="card-category">${getCategoryShort(p.categoria)}</span>
+        <span class="card-category ${getCategoryColorClass(p.categoria)}">${getCategoryShort(p.categoria)}</span>
         <div class="card-header-actions">
           <input type="number" class="card-qty" min="1" value="${qty}"
             title="Cantidad" onchange="updateQuantity('${p.id}', this)">

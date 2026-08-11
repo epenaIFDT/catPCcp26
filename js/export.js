@@ -136,6 +136,7 @@ function buildItemSpecsSummary(p) {
   if (p.specs.fuente) block += `   Fuente de poder: ${p.specs.fuente}\n`;
   if (p.specs.chipset) block += `   Chipset: ${p.specs.chipset}\n`;
   block += `   Garantia: ${p.specs.garantia}\n`;
+  if (p.fichaUrl) block += `   Ficha tecnica: ${p.fichaUrl}\n`;
   return block;
 }
 

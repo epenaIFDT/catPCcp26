@@ -575,6 +575,17 @@ body {
   font-weight: 600;
 }
 
+/* Un color distinto por categoría (paleta sobria: cada uno pasa >=4.5:1 de
+   contraste sobre blanco). Clase asignada por getCategoryColorClass() en
+   render.js — si aparece una categoría nueva sin mapear, se queda con el
+   azul de .card-category de arriba. */
+.card-category-desktop        { color: #2c5f8a; background: rgba(44, 95, 138, 0.10); }
+.card-category-workstation    { color: #6b4a8a; background: rgba(107, 74, 138, 0.10); }
+.card-category-portatil       { color: #2f7266; background: rgba(47, 114, 102, 0.10); }
+.card-category-aio            { color: #966a2f; background: rgba(150, 106, 47, 0.10); }
+.card-category-monitor        { color: #55637a; background: rgba(85, 99, 122, 0.10); }
+.card-category-pantalla       { color: #8a3a52; background: rgba(138, 58, 82, 0.10); }
+
 .card-header-actions {
   display: flex;
   align-items: center;
