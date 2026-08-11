@@ -118,24 +118,28 @@ function buildWhatsAppCompactText(products, fecha, ref) {
 // Igual que buildItemSpecsWhatsApp pero en texto plano (sin viñetas ni
 // negritas), para "Copiar resumen" — pensado para pegar en Word/Excel.
 function buildItemSpecsSummary(p) {
+  let block;
   if (CATEGORIAS_SIN_SPECS.includes(p.categoria)) {
-    return `   ${getDescriptionSummary(p, 220)}\n`;
+    block = `   ${getDescriptionSummary(p, 220)}\n`;
+  } else {
+    block = '';
+    block += `   CPU: ${formatProcessor(p.specs.procesador)}\n`;
+    block += `   RAM: ${formatRAM(p.specs.ram)}\n`;
+    block += `   Disco: ${formatStorage(p.specs.almacenamiento)}\n`;
+    if (p.specs.pantalla) block += `   Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
+    block += `   SO: ${formatOS(p.specs.sistemaOperativo)}\n`;
+    if (p.specs.software && p.specs.software !== 'NO') block += `   Office: ${formatSoftware(p.specs.software)}\n`;
+    if (isDedicatedVideo(p.specs.tarjetaVideo)) {
+      block += `   GPU: ${p.specs.tarjetaVideo}\n`;
+    }
+    if (p.specs.case) block += `   Gabinete: ${p.specs.case}\n`;
+    if (p.specs.fuente) block += `   Fuente de poder: ${p.specs.fuente}\n`;
+    if (p.specs.chipset) block += `   Chipset: ${p.specs.chipset}\n`;
+    block += `   Garantia: ${p.specs.garantia}\n`;
   }
-
-  let block = '';
-  block += `   CPU: ${formatProcessor(p.specs.procesador)}\n`;
-  block += `   RAM: ${formatRAM(p.specs.ram)}\n`;
-  block += `   Disco: ${formatStorage(p.specs.almacenamiento)}\n`;
-  if (p.specs.pantalla) block += `   Pantalla: ${formatScreen(p.specs.pantalla)}\n`;
-  block += `   SO: ${formatOS(p.specs.sistemaOperativo)}\n`;
-  if (p.specs.software && p.specs.software !== 'NO') block += `   Office: ${formatSoftware(p.specs.software)}\n`;
-  if (isDedicatedVideo(p.specs.tarjetaVideo)) {
-    block += `   GPU: ${p.specs.tarjetaVideo}\n`;
-  }
-  if (p.specs.case) block += `   Gabinete: ${p.specs.case}\n`;
-  if (p.specs.fuente) block += `   Fuente de poder: ${p.specs.fuente}\n`;
-  if (p.specs.chipset) block += `   Chipset: ${p.specs.chipset}\n`;
-  block += `   Garantia: ${p.specs.garantia}\n`;
+  // Se agrega SIEMPRE, sin importar la categoría (antes quedaba solo para
+  // las categorías con specs completas, porque CATEGORIAS_SIN_SPECS
+  // cortaba la función con un "return" antes de llegar a esta línea).
   if (p.fichaUrl) block += `   Ficha tecnica: ${p.fichaUrl}\n`;
   return block;
 }
