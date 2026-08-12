@@ -1,7 +1,4 @@
-# Herramienta de administración: solo debe existir en local, nunca subirse.
+# Herramienta de administración y todo su tooling de ejecución local
+# (incluye admin-local/ScriptsLocales/): solo debe existir en local, nunca
+# subirse. Ver admin-local/RESUMEN-PROYECTO.md sección 3.
 admin-local/
-
-# Exportaciones locales (catálogo completo sin cifrar, con precios) —
-# nunca deben subirse al repo público. Los scripts de ScriptsLocales/ sí
-# quedan versionados (no son sensibles), solo su carpeta de resultados.
-ScriptsLocales/Data/
