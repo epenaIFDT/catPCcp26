@@ -1,26 +1,6 @@
 // Requiere crypto.js cargado antes que este archivo
 const AUTH_KEY = 'vastec_session';
-const SESSION_DURATION = 90 * 24 * 60 * 60 * 1000; // 90 días
-
-// Códigos temporales de uso limitado (usosMaximos en keys.enc.json, ver
-// admin-local/js/codes.js): el contador vive en localStorage de ESTE
-// navegador, no en un servidor — no existe forma de contar usos de verdad
-// entre distintos dispositivos sin backend propio. Suficiente para el caso
-// de uso real (un código de demo que se agota en el mismo navegador), pero
-// alguien con herramientas de desarrollador podría resetear su propio
-// contador borrando el almacenamiento local.
-const CODE_USAGE_KEY = 'vastec_uso_codigos';
-
-function leerUsosCodigos() {
-  try { return JSON.parse(localStorage.getItem(CODE_USAGE_KEY) || '{}'); }
-  catch (e) { return {}; }
-}
-
-function registrarUsoCodigo(lookupHash) {
-  const usos = leerUsosCodigos();
-  usos[lookupHash] = (usos[lookupHash] || 0) + 1;
-  localStorage.setItem(CODE_USAGE_KEY, JSON.stringify(usos));
-}
+const SESSION_DURATION = 90 * 24 * 60 * 60 * 1000; // 90 días (solo rol "user"; admin no vence, ver abajo)
 
 async function validateCode(code) {
   const keysRes = await fetch('data/keys.enc.json');
@@ -49,26 +29,14 @@ async function validateCode(code) {
     return null;
   }
 
-  // El código es válido — recién ahora, si tiene límite de usos, se
-  // comprueba/descuenta (nunca antes de confirmar que el código es
-  // genuino, para no gastar usos con intentos fallidos).
-  if (entry.usosMaximos) {
-    const usos = leerUsosCodigos();
-    const usados = usos[lookupHash] || 0;
-    if (usados >= entry.usosMaximos) {
-      throw Object.assign(
-        new Error('Este código alcanzó su límite de usos en este dispositivo. Contacta al administrador.'),
-        { code: 'USAGE_LIMIT_REACHED' }
-      );
-    }
-    registrarUsoCodigo(lookupHash);
-  }
-
+  const rol = entry.rol || 'user';
   const session = {
     nombre: entry.nombre,
-    rol: entry.rol || 'user',
+    rol,
     dkBase64: await exportKeyBase64(dataKey),
-    expires: Date.now() + SESSION_DURATION
+    // Admin: acceso indeterminado, sin vencimiento (expires: null). Usuario
+    // normal: sigue venciendo a los 90 días, como siempre.
+    expires: rol === 'admin' ? null : Date.now() + SESSION_DURATION
   };
   localStorage.setItem(AUTH_KEY, JSON.stringify(session));
   return session;
@@ -79,7 +47,13 @@ function getSession() {
   if (!raw) return null;
   try {
     const session = JSON.parse(raw);
-    if (!session || !session.expires || Date.now() > session.expires) {
+    if (!session) {
+      localStorage.removeItem(AUTH_KEY);
+      return null;
+    }
+    // session.expires === null (admin, ver validateCode) significa "sin
+    // vencimiento" — nunca se cae a la rama de sesión expirada.
+    if (session.expires && Date.now() > session.expires) {
       localStorage.removeItem(AUTH_KEY);
       return null;
     }

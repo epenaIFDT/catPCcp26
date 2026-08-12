@@ -1,79 +1,79 @@
 {
   "f82e88b2c88f8f7b0db9f9ec1f53190c9ad49bc85fedb3313ceb395f2206d4d4": {
-    "salt": "IJlIxwRHjVdstPi3n4OuiQ==",
-    "iv": "dsD0UsqVNoVTixYc",
-    "wrappedKey": "NfAinzxjqnSizGao1m19Pj6jzxxUpVm6+3oahpI8X6TkbzdQ4lGv9jdPvDiQ3LW/",
+    "salt": "pOs1LC+Vm1fJCUAZCN4L9A==",
+    "iv": "WzwYxez7V+UckC+S",
+    "wrappedKey": "k7tPfoY9skveqfZd8LRALSKe+D7O6hMKXBUtXaERrq9N2JAfjwRAkJGDMdAwFpj9",
     "nombre": "Administrador",
     "rol": "admin"
   },
   "3c5181ac688c29ecd89a07fb4c098d0a5b135e3d554fa2d95a7c3a5b684ee661": {
-    "salt": "r1MiuRh1gyECsOTvFEqMGQ==",
-    "iv": "HrPr570MaHcAjYQM",
-    "wrappedKey": "//ILrJqhicLn8qe1v+hK6bOSC2kxTRY2Oi3Gq3XSJLs7ZdoBATt/NmK6s0wNXtgb",
+    "salt": "0b8sjPvPDbcCJa8bnzPwRw==",
+    "iv": "95vWiA5YpUtpJmOy",
+    "wrappedKey": "ZdRZNfndzyr4sVKRhUASCrMaEkBfwuSgrOLQvHhx088d8ngzZCekZtyLyW3ECyEe",
     "nombre": "Yanet Cruz",
     "rol": "user"
   },
   "cb833ecc4166c4510dbd89feddfaae69ab07ae2e2522e36e1b3f7dfcad17f523": {
-    "salt": "+uVynVwtvP9Ykq4qgcFK1w==",
-    "iv": "r1PYW6jVwGVILuA4",
-    "wrappedKey": "8xFAufAAXdSz6CBoGp4rD3ifwDAI57nNpzZhCsglx8hxinZo+VBdcHTuaxp3FwK3",
+    "salt": "tUv82vJnyzqvaFncdAx+9A==",
+    "iv": "OYWK2RMv6Uz4Ij5k",
+    "wrappedKey": "7+Q3dZ7UG+OYkYh1IGUxW3rqFBPJ4PrGuJL4b5pZH8pnBlnUG4DGN565pjEcMbGH",
     "nombre": "William Castellares",
     "rol": "user"
   },
   "31b7d62014330783c72f4a7c35f8d8079bdbfaabbb8a3bc20629a98afae8d0bd": {
-    "salt": "BLQbrH5+RJG7SFUdGBWGAg==",
-    "iv": "Cv0lAtU8Zweb/EJX",
-    "wrappedKey": "GQARBpKc7YTT3IPVkzSnlNc5dQn/lE+3I5qb4dPkx9zQmH+IJbMIXFufn7/KY8Dx",
+    "salt": "YjrxtlZ/vUTFKrw167Po4w==",
+    "iv": "Cx5l/X9Wdhzq939+",
+    "wrappedKey": "cj+R+MVWOPPwL2MAUFl1G26bBOS852JdzpK4kx44kln2aRG7eg3KB9cyLGqUz2/T",
     "nombre": "Walter Ortega",
     "rol": "user"
   },
   "aa1eec363ad842fbe6780559c2402800ffcb267cf0ecb204dd3318378f19f853": {
-    "salt": "1Rv8Dx7EHOrSpD+3l8c2hw==",
-    "iv": "je3GFxjpTMUq3/jd",
-    "wrappedKey": "LhDBzNmpFCiU5HkruJL+3BgmNpp0hNa6GGOKYTWgXQYUCFvs8SSGl8KgTMoTQ63I",
+    "salt": "bKJiefLdRjqOW4M1yH9szw==",
+    "iv": "I90gbiAFahuIN3zJ",
+    "wrappedKey": "ioGA6kC/cPRBOEbA+C+v1P6K1+K9JsHuxXsHKwse3GA+NpmIcJ4i1pkok/gBwuEf",
     "nombre": "Carlos Yanac",
     "rol": "user"
   },
   "8954d76a09bcfbc8d4d0dd3bbab2bd0552f66027d55e3c573456f176fe8626d4": {
-    "salt": "qVx4PXdOlyRPC25dsLHcPQ==",
-    "iv": "TjQxnkwHEIJXUhSY",
-    "wrappedKey": "75eI6d60dXBk+jXeQMw006/n7PMhwsGbITmaOFLbm/ecut02w/pI92LCZcbAMtDJ",
+    "salt": "b1jM1ZGPiOuMAEUGD42hrQ==",
+    "iv": "4JJSnk5KOSkuy2Ev",
+    "wrappedKey": "6w/hbfNPlCfTcpJXmItSw478qI9rqzgzSgXlIo1eiyJZ5vIvBNUT7/5OQc9LXmWC",
     "nombre": "Ventas Gen.",
     "rol": "user"
   },
   "3084a1602ebcfa0a5b106b1187beb02fb50382fdfba9c637683fe9a93bfa993c": {
-    "salt": "QwfIeY+JH8lgavxLNg/pRA==",
-    "iv": "CYg3XsQYUTNdwIaA",
-    "wrappedKey": "OTjorE7oQV7o0I1yasD4I7XU8ktG0BqBjP/Nb4tOjyFiGIB0uVxBImD5Kfzw9Ece",
+    "salt": "aB/n58Ro7uZzV6OplkEfbg==",
+    "iv": "Q8oI+MeYzw6E7f5i",
+    "wrappedKey": "PVmt7zpNaP4YWGnS/Q0imnu4aImxZu0XO7JExZig/hYGD1jPw9a5dxVLy8ptDGR5",
     "nombre": "Admin 1",
     "rol": "admin"
   },
   "b5c9cb76d51919b676a08bccff89e5f05d725e2e4da6297caacda2bdce51a860": {
-    "salt": "NRSKAa8RIS9L9ZB/8xj+zA==",
-    "iv": "T6BKdVZlW0T63/om",
-    "wrappedKey": "lMdfh3p5gueAZxZ3Q/Ywh8U3JXCfugpGk2btVxgjAS8jisWCIcLrSYsA828v7EtV",
+    "salt": "zT5k2CLvQl6mGfKxCl6BSg==",
+    "iv": "3RGnOn1o0aG3G8Ib",
+    "wrappedKey": "O0jie9uX5PTko6XAksGmJOZByaWz+QIL91SS612lOd4X8/fNsJrApLs+O0TuCrJE",
     "nombre": "Admin 2",
     "rol": "user"
   },
   "a6bf31596094bbbb8d97dccbe7e7362e4bee31d5d31bb4cee1fb88c8dafffcd1": {
-    "salt": "rEihqio+LWvnDopaSq25Gw==",
-    "iv": "LdoTczOc9GwnoEfd",
-    "wrappedKey": "Qg0vjpdOFkfC0ryKH/Gsvnp7yLWk/yImEbeIExljBfJFIIBMA3syFzwzip6HTpL+",
+    "salt": "u3NiKv+JmBVWhwYa4TZ8uA==",
+    "iv": "LxQE4fYPXp0/hrYh",
+    "wrappedKey": "cNW0/Yv4kDr71L3rqmVpqOQAAN2jsx8IFnuc2jm9VCiqzGRFC8euLOjrZ2yQOJxq",
     "nombre": "Admin 3",
     "rol": "user"
   },
   "1770cc9c8e6a8a1fa173127ca23f27df53e74160350110f79667261358b97a4d": {
-    "salt": "ehfKvhSJgNSIqskAvGMVEA==",
-    "iv": "5mJ0R0FdJSIa4030",
-    "wrappedKey": "E4hwDKTrPMBG5Wg2d6Rw1NQD0nbgxIXb0ZeRsOIPzClkYO8pRYWB7sDaXJbBjf8X",
+    "salt": "laGDqxMo0iQmQapwPpyHDg==",
+    "iv": "mXlDgGHJUaanxqm/",
+    "wrappedKey": "Wjln2FKgRwx41C6287nRcr2/IvvjlGTBMORLf59wRZLeEwIzR2vfP5BWk5DHyldD",
     "nombre": "Admin 4",
     "rol": "user"
   },
-  "1a6e4c00d5d28c7072abdfdc191a0f873d8488f2fef7742e0f283187f28d1473": {
-    "salt": "oZtl1kyKK6oIse5aTBWoAg==",
-    "iv": "tFN06WR1klQREsd6",
-    "wrappedKey": "ipfl1mS5LP/F9VPviC42WlYp86N8CGfLbG7HVR0sbf3KQbaoSNm473jkdW6j+Jdj",
-    "nombre": "Clave Maestra (SOLO PRUEBAS LOCALES)",
-    "rol": "admin"
+  "566899d475eaedccfab1a83ee9e605b815098bbe120fe2f2ede20d2b4128a132": {
+    "salt": "xIIZI48HpRJ5fHrrabndyA==",
+    "iv": "Ug4b7KJlFjmxH9qD",
+    "wrappedKey": "880eROCPVS3871vgAnlfgqA55n6+6/1Wj17E7q2Da27/+9XJTOhovLkNuter7AX6",
+    "nombre": "Guest",
+    "rol": "user"
   }
 }

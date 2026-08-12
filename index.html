@@ -294,7 +294,8 @@
       <!-- AYUDA -->
       <div class="login-help">
         💡 El código lo proporciona el administrador del sistema.<br>
-        La sesión permanece activa por <strong>90 días</strong>.
+        La sesión permanece activa por <strong>90 días</strong>
+        (sin vencimiento para administradores).
       </div>
 
       <!-- FOOTER -->
@@ -374,14 +375,9 @@
         }
         
       } catch (error) {
+        // ⚠️ Error de red u otro
         console.error('Error en login:', error);
-        if (error && error.code === 'USAGE_LIMIT_REACHED') {
-          // Código válido pero ya agotó sus usos en este navegador (ver js/auth.js)
-          showError(error.message);
-        } else {
-          // ⚠️ Error de red u otro
-          showError('Error de conexión. Verifica tu conexión a internet.');
-        }
+        showError('Error de conexión. Verifica tu conexión a internet.');
         setLoading(false);
       }
     }
