@@ -6,6 +6,13 @@
 # admin-local/RESUMEN-PROYECTO.md seccion 5: el archivo en disco y lo que
 # usa el panel (IndexedDB del navegador) NO son la misma cosa.
 #
+# IMPORTANTE: este script es un .ps1, requiere PowerShell (no funciona desde
+# el Simbolo del sistema / cmd.exe). Si al ejecutarlo ves un error como
+# "no se reconoce como un comando interno o externo", estas en cmd.exe --
+# abri PowerShell (buscalo en el menu de inicio) y volve a intentar, o usa
+# el archivo actualizar_sqlite_desde_descargas.bat de esta misma carpeta
+# (funciona desde cualquiera de los dos).
+#
 # Uso:
 #   cd F:\proyectos\FichasNew
 #   .\ScriptsLocales\actualizar_sqlite_desde_descargas.ps1
