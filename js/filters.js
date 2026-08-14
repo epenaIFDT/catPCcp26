@@ -22,6 +22,7 @@ let activeFilters = {
   fuente: new Set(),
   video: new Set(),
   chipset: new Set(),
+  pantalla: new Set(),
   lan: '',
   wlan: '',
   hdmi: '',
@@ -44,7 +45,8 @@ const MULTI_FILTER_KEYS = [
   { key: 'case', label: 'Gabinete', field: 'case', searchable: true },
   { key: 'fuente', label: 'Fuente de Poder', field: 'fuente', searchable: true },
   { key: 'video', label: 'Tarjeta de Video', field: 'tarjetaVideo', searchable: true },
-  { key: 'chipset', label: 'Chipset', field: 'chipset', searchable: true }
+  { key: 'chipset', label: 'Chipset', field: 'chipset', searchable: true },
+  { key: 'pantalla', label: 'Pantalla', field: 'pantalla', searchable: true }
 ];
 
 const BOOL_FILTER_KEYS = ['lan', 'wlan', 'hdmi', 'vga', 'optica'];
